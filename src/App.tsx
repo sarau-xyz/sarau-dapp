@@ -2,7 +2,7 @@ import "./App.css";
 import { WagmiConfig, createClient } from "wagmi";
 import { getDefaultProvider } from "ethers";
 import Header from "./components/Header";
-import CreateSarau from "./pages/create-sarau";
+import Create from "./pages/create";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const client = createClient({
@@ -17,9 +17,9 @@ function App() {
         <div className="App">
           <Header />
           <Routes>
-          <Route path="/" element={<CreateSarau />}/>
-            <Route path="/create" element={<CreateSarau />}/>
-            <Route path="/mint" element={<CreateSarau />}/>
+          <Route path="/" element={<Create />}/>
+            <Route path="/create" element={<Create />}/>
+            <Route path="/mint" element={<Create />}/>
           </Routes>
         </div>
       </WagmiConfig>
