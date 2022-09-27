@@ -1,7 +1,9 @@
-import logo from "./logo.svg";
 import "./App.css";
 import { WagmiConfig, createClient } from "wagmi";
 import { getDefaultProvider } from "ethers";
+import Header from "./components/Header";
+import CreateSarau from "./pages/create-sarau";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 const client = createClient({
   autoConnect: true,
@@ -10,24 +12,18 @@ const client = createClient({
 
 function App() {
   return (
-    <WagmiConfig client={client}>
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.tsx</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
-    </WagmiConfig>
+    <Router>
+      <WagmiConfig client={client}>
+        <div className="App">
+          <Header />
+          <Routes>
+          <Route path="/" element={<CreateSarau />}/>
+            <Route path="/create" element={<CreateSarau />}/>
+            <Route path="/mint" element={<CreateSarau />}/>
+          </Routes>
+        </div>
+      </WagmiConfig>
+    </Router>
   );
 }
 
