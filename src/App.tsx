@@ -1,4 +1,4 @@
-import "./App.css";
+import 'bootstrap/dist/css/bootstrap.min.css';
 import { WagmiConfig, createClient } from "wagmi";
 import { getDefaultProvider } from "ethers";
 import Header from "./components/Header";
