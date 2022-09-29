@@ -3,7 +3,7 @@ import {
   FormGroup,
   Label,
   Input,
-  FormText,
+  Badge,
   Button,
   Card,
   CardBody,
@@ -25,12 +25,16 @@ export default function Mint() {
       >
         <img
           alt="Sample"
-          src="https://he-s3.s3.amazonaws.com/media/sprint/celo-hackathon/b6c7fceBuild-with-Celo-Prizes-NFTs.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIA6I2ISGOYH7WWS3G5%2F20220927%2Fap-southeast-1%2Fs3%2Faws4_request&X-Amz-Date=20220927T215443Z&X-Amz-Expires=3600&X-Amz-SignedHeaders=host&X-Amz-Signature=313d18308c93cb861b581ca6e9983e7639c9035f0fdce93c25d9112070970da1"
+          src="https://static.crypto.com/token/icons/celo/color_icon.png"
+          className="mt-3"
         />
         <CardBody>
           <CardTitle tag="h5">Build With Celo ReFi Hackathon '22</CardTitle>
           <CardSubtitle className="mb-2 text-muted" tag="h6">
             BWCH2022
+            
+                
+              
           </CardSubtitle>
           <CardText>
             {/* Some quick example text to build on the card title and make up the
@@ -38,6 +42,7 @@ export default function Mint() {
             <p style={{ cursor: "pointer" }}>
               <FaLink /> celo.org
             </p>
+            <p>Mint ends in <Badge>23h33s</Badge></p>
           </CardText>
           <Button color="primary" block>
             Mint
