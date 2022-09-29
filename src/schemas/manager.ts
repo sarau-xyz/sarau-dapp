@@ -1,10 +1,12 @@
 import * as yup from 'yup';
 
-export const createSarau = yup.object({
-    name: yup.string(),
-    symbol: yup.string(),
-    maxMint: yup.string(),
-    startDate: yup.number().integer(),
-    endDate: yup.number().integer(),
-    homepage: yup.string().url()
-});
+export type CreateSarauForm = yup.InferType<typeof createSarauSchema> ;
+
+export const createSarauSchema = yup.object({
+    name: yup.string().required(),
+    symbol: yup.string().uppercase().required(),
+    maxMint: yup.string().required(),
+    startDate: yup.date().required(),
+    endDate: yup.date().required(),
+    homepage: yup.string().url().required()
+}).required();

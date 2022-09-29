@@ -6,6 +6,7 @@ import Create from "./pages/create";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Container } from "reactstrap";
 import Mint from "./pages/mint";
+import "./App.css";
 
 const client = createClient({
   autoConnect: true,
