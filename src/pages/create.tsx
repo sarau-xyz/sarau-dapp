@@ -1,8 +1,16 @@
 import { FormHandles } from "@unform/core";
 import { Form } from "@unform/web";
 import cogoToast from "cogo-toast";
-import { useRef, useState } from "react";
-import { FormGroup, Label, FormText } from "reactstrap";
+import { useEffect, useRef, useState } from "react";
+import {
+  FormGroup,
+  Label,
+  FormText,
+  Input,
+  Card,
+  Row,
+  Container,
+} from "reactstrap";
 import { ValidationError } from "yup";
 import CreateSarauModal from "../components/CreateSarauModal";
 import CustomButton from "../components/forms/CustomButton";
@@ -13,6 +21,20 @@ export default function Create() {
   const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
   const [parsedData, setParsedData] = useState<CreateSarauForm>();
+  const [file, setFile] = useState<File>();
+  const [fileUrl, setFileUrl] = useState<string>();
+
+  useEffect(() => {
+    if (file) {
+      const objectUrl = URL.createObjectURL(file);
+
+      setFileUrl(objectUrl);
+
+      return () => {
+        URL.revokeObjectURL(objectUrl);
+      };
+    }
+  }, [file]);
 
   const handleFormSubmit = async (data: CreateSarauForm) => {
     try {
@@ -103,16 +125,40 @@ export default function Create() {
           <Label for="homepage">Homepage</Label>
           <CustomInput id="homepage" name="homepage" type="url" />
         </FormGroup>
-        <FormGroup>
-          <Label for="exampleFile">File</Label>
-          <CustomInput id="exampleFile" name="file" type="file" />
-          <FormText>
-            Recommended: measures 500x500px, round shape, size less than 200KB
-            (Max. 1MB)
-          </FormText>
-        </FormGroup>
+        <Card body>
+          <FormGroup>
+            <Label for="image">Image</Label>
+            <Input
+              id="image"
+              name="image"
+              type="file"
+              accept="image/*"
+              required
+              onChange={(e) =>
+                e.target.files ? setFile(e.target.files[0]) : null
+              }
+            />
+            <FormText>
+              Recommended: measures 500x500px, round shape, size less than 200KB
+              (Max. 1MB)
+            </FormText>
+            {file && (
+              <Row className="text-center mt-3">
+                <Container>
+                  <img
+                    src={fileUrl}
+                    alt="..."
+                    className="img-thumbnail "
+                    width={500}
+                    height={500}
+                  />
+                </Container>
+              </Row>
+            )}
+          </FormGroup>
+        </Card>
 
-        <CustomButton loading={loading} color="primary">
+        <CustomButton loading={loading} color="primary" className="mt-3">
           Create
         </CustomButton>
       </Form>
