@@ -2,11 +2,7 @@ import { FormHandles } from "@unform/core";
 import { Form } from "@unform/web";
 import cogoToast from "cogo-toast";
 import { useRef, useState } from "react";
-import {
-  FormGroup,
-  Label,
-  FormText,
-} from "reactstrap";
+import { FormGroup, Label, FormText } from "reactstrap";
 import { ValidationError } from "yup";
 import CreateSarauModal from "../components/CreateSarauModal";
 import CustomButton from "../components/forms/CustomButton";
@@ -16,15 +12,17 @@ import { createSarauSchema, CreateSarauForm } from "../schemas/manager";
 export default function Create() {
   const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
+  const [parsedData, setParsedData] = useState<CreateSarauForm>();
 
   const handleFormSubmit = async (data: CreateSarauForm) => {
     try {
       setLoading(true);
-      const parsedData = await createSarauSchema.validate(data, {
+      const tParsedData = await createSarauSchema.validate(data, {
         abortEarly: false,
       });
 
-      console.log(parsedData);
+      console.log(tParsedData);
+      setParsedData(tParsedData);
     } catch (err) {
       console.error(err);
 
@@ -46,7 +44,7 @@ export default function Create() {
 
   return (
     <>
-      <CreateSarauModal isOpen data={{}}/>
+      {parsedData && <CreateSarauModal data={parsedData!} />}
       <Form ref={formRef} onSubmit={handleFormSubmit}>
         <FormGroup>
           <Label for="name">Name</Label>

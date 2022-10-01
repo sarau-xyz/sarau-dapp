@@ -13,9 +13,8 @@ import {
 import { CreateSarauForm } from "../schemas/manager";
 
 const CreateSarauModal: React.FC<{
-  isOpen: boolean;
   data: CreateSarauForm;
-}> = ({ isOpen, data }) => {
+}> = ({  data }) => {
     const [step, setStep] = useState(1);
 
   const sendToIPFS = async () => {
@@ -46,7 +45,7 @@ const CreateSarauModal: React.FC<{
   }, []);
 
   return (
-    <Modal isOpen={isOpen}>
+    <Modal isOpen>
       <ModalHeader>Creating your NFT</ModalHeader>
       <ModalBody>
         <ListGroup>
