@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import {
   AiOutlineLoading3Quarters,
   AiOutlineClockCircle,
+  AiFillCheckCircle,
 } from "react-icons/ai";
 import {
   ListGroup,
@@ -34,8 +35,9 @@ const CreateSarauModal: React.FC<{
   };
 
   const sendToBlockchain = async () => {
-    const created = await sarauMaker!.createSarau({ value: ethers.utils.parseUnits("1", "ether") });
-
+    const created = await sarauMaker!.createSarau({
+      value: ethers.utils.parseUnits("1", "ether"),
+    });
 
     return new Promise((res) => setTimeout(res, 2000));
   };
@@ -50,21 +52,28 @@ const CreateSarauModal: React.FC<{
     doSteps();
   }, []);
 
+  const makeStepIcon = (step: number, current: number) => {
+    if (current > step) {
+      return <AiFillCheckCircle color="green" />;
+    } else if (step == current) {
+      <AiOutlineLoading3Quarters className="spin" />;
+    } else if (step < current) {
+      <AiOutlineClockCircle />;
+    }
+  };
+
   return (
     <Modal isOpen>
       <ModalHeader>Creating your NFT</ModalHeader>
       <ModalBody>
         <ListGroup>
           <ListGroupItem>
-            <AiOutlineLoading3Quarters className="spin" /> Sending your image to
-            IPFS
+            {makeStepIcon(1, step)} Sending your image to IPFS
           </ListGroupItem>
           <ListGroupItem>
-            <AiOutlineClockCircle /> Requesting transaction to your wallet
+            {makeStepIcon(2, step)} Requesting transaction to your wallet
           </ListGroupItem>
-          <ListGroupItem>
-            <AiOutlineClockCircle /> NFT created
-          </ListGroupItem>
+          <ListGroupItem>{makeStepIcon(3, step)} NFT created</ListGroupItem>
         </ListGroup>
       </ModalBody>
     </Modal>
