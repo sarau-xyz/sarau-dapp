@@ -15,9 +15,11 @@ import { ValidationError } from "yup";
 import CreateSarauModal from "../components/CreateSarauModal";
 import CustomButton from "../components/forms/CustomButton";
 import CustomInput from "../components/forms/CustomInput";
+import { useSarauMaker } from "../hooks/useSarauMaker";
 import { createSarauSchema, CreateSarauForm } from "../schemas/manager";
 
 export default function Create() {
+  const sarauMaker = useSarauMaker();
   const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
   const [parsedData, setParsedData] = useState<CreateSarauForm>();
@@ -37,6 +39,11 @@ export default function Create() {
   }, [file]);
 
   const handleFormSubmit = async (data: CreateSarauForm) => {
+
+    if (!sarauMaker) {
+      return cogoToast.error('please connect to the supported chain');
+    }
+
     try {
       setLoading(true);
       const tParsedData = await createSarauSchema.validate(data, {
@@ -158,7 +165,7 @@ export default function Create() {
           </FormGroup>
         </Card>
 
-        <CustomButton loading={loading} color="primary" className="mt-3">
+        <CustomButton loading={loading} color="primary" className="mt-3" type="submit">
           Create
         </CustomButton>
       </Form>

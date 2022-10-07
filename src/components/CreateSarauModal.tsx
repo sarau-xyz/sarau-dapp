@@ -1,3 +1,4 @@
+import { ethers } from "ethers";
 import React, { useEffect, useState } from "react";
 import {
   AiOutlineLoading3Quarters,
@@ -10,33 +11,38 @@ import {
   ModalBody,
   ModalHeader,
 } from "reactstrap";
+import { useSarauMaker } from "../hooks/useSarauMaker";
 import { CreateSarauForm } from "../schemas/manager";
 
 const CreateSarauModal: React.FC<{
   data: CreateSarauForm;
-}> = ({  data }) => {
-    const [step, setStep] = useState(1);
+}> = ({ data }) => {
+  const sarauMaker = useSarauMaker();
+  const [step, setStep] = useState(1);
 
   const sendToIPFS = async () => {
     // TODO send files to ipfs
 
-    const ipfsUrl = 'todo';
+    const ipfsUrl = "todo";
 
     const jsonToCreate = JSON.stringify({
       name: data.name,
       image: ipfsUrl,
     });
 
-    return new Promise(res => setTimeout(res, 500));
+    return new Promise((res) => setTimeout(res, 500));
   };
 
   const sendToBlockchain = async () => {
-    return new Promise(res => setTimeout(res, 2000));
+    const created = await sarauMaker!.createSarau({ value: ethers.utils.parseUnits("1", "ether") });
+
+
+    return new Promise((res) => setTimeout(res, 2000));
   };
 
   const doSteps = async () => {
     await sendToIPFS();
-    
+
     await sendToBlockchain();
   };
 
