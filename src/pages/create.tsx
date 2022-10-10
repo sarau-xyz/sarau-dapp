@@ -39,9 +39,8 @@ export default function Create() {
   }, [file]);
 
   const handleFormSubmit = async (data: CreateSarauForm) => {
-
     if (!sarauMaker) {
-      return cogoToast.error('please connect to the supported chain');
+      return cogoToast.error("please connect to the supported chain");
     }
 
     try {
@@ -73,7 +72,9 @@ export default function Create() {
 
   return (
     <>
-      {parsedData && <CreateSarauModal data={parsedData!} />}
+      {parsedData && file && (
+        <CreateSarauModal data={parsedData!} file={file} />
+      )}
       <Form ref={formRef} onSubmit={handleFormSubmit}>
         <FormGroup>
           <Label for="name">Name</Label>
@@ -165,7 +166,12 @@ export default function Create() {
           </FormGroup>
         </Card>
 
-        <CustomButton loading={loading} color="primary" className="mt-3" type="submit">
+        <CustomButton
+          loading={loading}
+          color="primary"
+          className="mt-3"
+          type="submit"
+        >
           Create
         </CustomButton>
       </Form>

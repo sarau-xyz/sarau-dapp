@@ -14,28 +14,40 @@ import {
 } from "reactstrap";
 import { useSarauMaker } from "../hooks/useSarauMaker";
 import { CreateSarauForm } from "../schemas/manager";
+import axios from "axios";
 
 const CreateSarauModal: React.FC<{
   data: CreateSarauForm;
-}> = ({ data }) => {
+  file: File;
+}> = ({ data, file }) => {
   const sarauMaker = useSarauMaker();
+  const [uploadProgress, setUploadProgress] = useState(0);
   const [step, setStep] = useState(1);
 
   const sendToIPFS = async () => {
-    // TODO send files to ipfs
+    const form = new FormData();
+    form.append(file.name, file);
+    form.append("name", data.name);
 
-    const ipfsUrl = "todo";
+    const res = await axios.post<{ cid: string }>(
+      "ipfs-uploader.sarau.xyz",
+      form,
+      {
+        onUploadProgress(progressEvent) {
+          const percentage = Math.round(progressEvent.loaded * 100);
+          setUploadProgress(percentage);
+        },
+      }
+    );
 
-    const jsonToCreate = JSON.stringify({
-      name: data.name,
-      image: ipfsUrl,
-    });
+    const cid = res.data.cid;
 
-    return new Promise((res) => setTimeout(res, 500));
+    return cid;
   };
 
-  const sendToBlockchain = async () => {
-    const created = await sarauMaker!.createSarau({
+  const sendToBlockchain = async (cid: string) => {
+    // TODO look in contract for parameters
+    const created = await sarauMaker!.createSarau(cid, {
       value: ethers.utils.parseUnits("1", "ether"),
     });
 
@@ -43,9 +55,9 @@ const CreateSarauModal: React.FC<{
   };
 
   const doSteps = async () => {
-    await sendToIPFS();
+    const cid = await sendToIPFS();
 
-    await sendToBlockchain();
+    await sendToBlockchain(cid);
   };
 
   useEffect(() => {
@@ -68,7 +80,8 @@ const CreateSarauModal: React.FC<{
       <ModalBody>
         <ListGroup>
           <ListGroupItem>
-            {makeStepIcon(1, step)} Sending your image to IPFS
+            {makeStepIcon(1, step)} Sending your image to IPFS ({uploadProgress}
+            %)
           </ListGroupItem>
           <ListGroupItem>
             {makeStepIcon(2, step)} Requesting transaction to your wallet
