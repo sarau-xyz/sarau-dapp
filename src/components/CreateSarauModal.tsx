@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import {
   AiOutlineLoading3Quarters,
   AiOutlineClockCircle,
@@ -22,9 +22,9 @@ const CreateSarauModal: React.FC<{
 }> = ({ data, file }) => {
   const sarauMaker = useSarauMaker();
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [step, setStep] = useState(1);
+  const [step, setStep] = useState(0);
 
-  const sendToIPFS = async () => {
+  const sendToIPFS = useCallback(async () => {
     const form = new FormData();
     form.append(file.name, file);
     form.append("name", data.name);
@@ -43,31 +43,46 @@ const CreateSarauModal: React.FC<{
     const cid = res.data.cid;
 
     return cid;
-  };
+  }, [setUploadProgress]);
 
-  const sendToBlockchain = async (cid: string) => {
-    // TODO look in contract for parameters
-    const created = await sarauMaker!.createSarau(cid, {
-      value: ethers.utils.parseUnits("1", "ether"),
-    });
+  const sendToBlockchain = useCallback(
+    async (cid: string) => {
+      // TODO look in contract for parameters
+      const created = await sarauMaker!.createSarau(
+        data.maxMint,
+        data.startDate,
+        data.endDate,
+        `ipfs://${cid}`,
+        data.homepage,
+        data.name,
+        data.symbol,
+        {
+          value: ethers.utils.parseUnits("1", "ether"),
+        }
+      );
 
-    return new Promise((res) => setTimeout(res, 2000));
-  };
+      return created;
+    },
+    [sarauMaker]
+  );
 
-  const doSteps = async () => {
+  const doSteps = useCallback(async () => {
+    setStep(1);
     const cid = await sendToIPFS();
-
-    await sendToBlockchain(cid);
-  };
+    setStep(2);
+    const sarauCreated = await sendToBlockchain(cid);
+    setStep(3);
+    setStep(4);
+  }, [sendToIPFS, sendToBlockchain]);
 
   useEffect(() => {
     doSteps();
-  }, []);
+  }, [doSteps]);
 
   const makeStepIcon = (step: number, current: number) => {
     if (current > step) {
       return <AiFillCheckCircle color="green" />;
-    } else if (step == current) {
+    } else if (step === current) {
       <AiOutlineLoading3Quarters className="spin" />;
     } else if (step < current) {
       <AiOutlineClockCircle />;
@@ -86,7 +101,7 @@ const CreateSarauModal: React.FC<{
           <ListGroupItem>
             {makeStepIcon(2, step)} Requesting transaction to your wallet
           </ListGroupItem>
-          <ListGroupItem>{makeStepIcon(3, step)} NFT created</ListGroupItem>
+          <ListGroupItem>{makeStepIcon(3, step)} Sarau created</ListGroupItem>
         </ListGroup>
       </ModalBody>
     </Modal>

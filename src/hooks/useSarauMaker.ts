@@ -7,7 +7,6 @@ import { useChainId } from "./useChainId";
 import { WrapperBuilder } from "redstone-evm-connector";
 
 export const useSarauMaker = () => {
-  const { isConnected } = useAccount();
   const { data: signer } = useSigner();
   const chainId = useChainId();
 
@@ -22,7 +21,7 @@ export const useSarauMaker = () => {
       ).usingPriceFeed("redstone", { asset: "CELO" });
     }
     return null;
-  }, [isConnected, chainId, signer]);
+  }, [chainId, signer]);
 
   return sarauMaker;
 };
