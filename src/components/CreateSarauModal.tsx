@@ -33,8 +33,10 @@ const CreateSarauModal: React.FC<{
       "ipfs-uploader.sarau.xyz",
       form,
       {
-        onUploadProgress(progressEvent) {
-          const percentage = Math.round(progressEvent.loaded * 100);
+        onUploadProgress: (progressEvent) => {
+          const percentage = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
           setUploadProgress(percentage);
         },
       }
@@ -83,9 +85,9 @@ const CreateSarauModal: React.FC<{
     if (current > step) {
       return <AiFillCheckCircle color="green" />;
     } else if (step === current) {
-      <AiOutlineLoading3Quarters className="spin" />;
+      return <AiOutlineLoading3Quarters className="spin" />;
     } else if (step < current) {
-      <AiOutlineClockCircle />;
+      return <AiOutlineClockCircle />;
     }
   };
 
