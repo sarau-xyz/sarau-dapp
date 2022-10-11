@@ -84,9 +84,9 @@ const CreateSarauModal: React.FC<{
   const makeStepIcon = (step: number, current: number) => {
     if (current > step) {
       return <AiFillCheckCircle color="green" />;
-    } else if (step === current) {
+    } else if (current === step) {
       return <AiOutlineLoading3Quarters className="spin" />;
-    } else if (step < current) {
+    } else if (current < step) {
       return <AiOutlineClockCircle />;
     }
   };
