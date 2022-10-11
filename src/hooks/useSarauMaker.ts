@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { useMemo } from "react";
-import { useAccount, useSigner } from "wagmi";
+import { useSigner } from "wagmi";
 import { SARAU_MAKER_ADDRESSES } from "../constants/SARA_MAKER_ADDRESSES";
 import abi from "../static/abis/SarauMaker.json";
 import { useChainId } from "./useChainId";

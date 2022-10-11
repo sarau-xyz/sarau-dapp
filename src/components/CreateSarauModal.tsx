@@ -43,7 +43,7 @@ const CreateSarauModal: React.FC<{
     const cid = res.data.cid;
 
     return cid;
-  }, [setUploadProgress]);
+  }, [data, setUploadProgress]);
 
   const sendToBlockchain = useCallback(
     async (cid: string) => {
@@ -63,7 +63,7 @@ const CreateSarauModal: React.FC<{
 
       return created;
     },
-    [sarauMaker]
+    [data, sarauMaker]
   );
 
   const doSteps = useCallback(async () => {
