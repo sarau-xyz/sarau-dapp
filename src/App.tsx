@@ -7,6 +7,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { Container } from "reactstrap";
 import Mint from "./pages/mint";
 import "./App.css";
+import Home from "./pages/home";
 
 const client = createClient({
   autoConnect: true,
@@ -20,7 +21,7 @@ function App() {
         <Header />
         <Container>
           <Routes>
-            <Route path="/" element={<Create />} />
+            <Route path="/" element={<Home />} />
             <Route path="/create" element={<Create />} />
             <Route path="/mint" element={<Mint />} />
           </Routes>

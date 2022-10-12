@@ -75,106 +75,116 @@ export default function Create() {
       {parsedData && file && (
         <CreateSarauModal data={parsedData!} file={file} />
       )}
-      <Form ref={formRef} onSubmit={handleFormSubmit}>
-        <FormGroup>
-          <Label for="name">Name</Label>
-          <CustomInput
-            id="name"
-            name="name"
-            placeholder="Build With Celo ReFi Hackathon '22"
-            type="text"
-            minLength={3}
-            required
-          />
-          <small>Name of your event, this will be also name of your NFT</small>
-        </FormGroup>
-        <FormGroup>
-          <Label for="symbol">Symbol</Label>
-          <CustomInput
-            id="symbol"
-            name="symbol"
-            placeholder="BWCH2022"
-            type="text"
-            minLength={3}
-            required
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for="maxMint">Max Mint</Label>
-          <CustomInput
-            id="maxMint"
-            name="maxMint"
-            placeholder="10000"
-            type="number"
-            step={1}
-            min={1}
-            required
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for="startDate">Mint Start Date</Label>
-          <CustomInput
-            id="startDate"
-            name="startDate"
-            type="datetime-local"
-            required
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for="endDate">Mint End Date</Label>
-          <CustomInput
-            id="endDate"
-            name="endDate"
-            type="datetime-local"
-            required
-          />
-        </FormGroup>
-        <FormGroup>
-          <Label for="homepage">Homepage</Label>
-          <CustomInput id="homepage" name="homepage" type="url" />
-        </FormGroup>
-        <Card body>
+      <Card
+        style={{
+          maxWidth: 500,
+        }}
+        body
+        className="mx-auto"
+      >
+        <Form ref={formRef} onSubmit={handleFormSubmit}>
           <FormGroup>
-            <Label for="image">Image</Label>
-            <Input
-              id="image"
-              name="image"
-              type="file"
-              accept="image/*"
+            <Label for="name">Name</Label>
+            <CustomInput
+              id="name"
+              name="name"
+              placeholder="Build With Celo ReFi Hackathon '22"
+              type="text"
+              minLength={3}
               required
-              onChange={(e) =>
-                e.target.files ? setFile(e.target.files[0]) : null
-              }
             />
-            <FormText>
-              Recommended: measures 500x500px, round shape, size less than 200KB
-              (Max. 1MB)
-            </FormText>
-            {file && (
-              <Row className="text-center mt-3">
-                <Container>
-                  <img
-                    src={fileUrl}
-                    alt="..."
-                    className="img-thumbnail "
-                    width={500}
-                    height={500}
-                  />
-                </Container>
-              </Row>
-            )}
+            <small>
+              Name of your event, this will be also name of your NFT
+            </small>
           </FormGroup>
-        </Card>
+          <FormGroup>
+            <Label for="symbol">Symbol</Label>
+            <CustomInput
+              id="symbol"
+              name="symbol"
+              placeholder="BWCH2022"
+              type="text"
+              minLength={3}
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="maxMint">Max Mint</Label>
+            <CustomInput
+              id="maxMint"
+              name="maxMint"
+              placeholder="10000"
+              type="number"
+              step={1}
+              min={1}
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="startDate">Mint Start Date</Label>
+            <CustomInput
+              id="startDate"
+              name="startDate"
+              type="datetime-local"
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="endDate">Mint End Date</Label>
+            <CustomInput
+              id="endDate"
+              name="endDate"
+              type="datetime-local"
+              required
+            />
+          </FormGroup>
+          <FormGroup>
+            <Label for="homepage">Homepage</Label>
+            <CustomInput id="homepage" name="homepage" type="url" />
+          </FormGroup>
+          <Card body>
+            <FormGroup>
+              <Label for="image">Image</Label>
+              <Input
+                id="image"
+                name="image"
+                type="file"
+                accept="image/*"
+                required
+                onChange={(e) =>
+                  e.target.files ? setFile(e.target.files[0]) : null
+                }
+              />
+              <FormText>
+                Recommended: measures 500x500px, round shape, size less than
+                200KB (Max. 1MB)
+              </FormText>
+              {file && (
+                <Row className="text-center mt-3">
+                  <Container>
+                    <img
+                      src={fileUrl}
+                      alt="..."
+                      className="img-thumbnail "
+                      width={500}
+                      height={500}
+                    />
+                  </Container>
+                </Row>
+              )}
+            </FormGroup>
+          </Card>
 
-        <CustomButton
-          loading={loading}
-          color="primary"
-          className="mt-3"
-          type="submit"
-        >
-          Create
-        </CustomButton>
-      </Form>
+          <CustomButton
+            loading={loading}
+            color="primary"
+            className="mt-3"
+            type="submit"
+          >
+            Create
+          </CustomButton>
+        </Form>
+      </Card>
     </>
   );
 }

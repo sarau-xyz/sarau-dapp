@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import {
   Collapse,
   Navbar,
@@ -17,15 +18,21 @@ function Header() {
 
   return (
     <Navbar expand="md">
-      <NavbarBrand href="/">Sarau.xyz</NavbarBrand>
+      <NavbarBrand tag={Link} to="/">
+        Sarau.xyz
+      </NavbarBrand>
       <NavbarToggler onClick={toggle} />
       <Collapse isOpen={isOpen} navbar>
         <Nav className="me-auto" navbar>
           <NavItem>
-            <NavLink href="/create">Create</NavLink>
+            <NavLink tag={Link} to="/create">
+              Create
+            </NavLink>
           </NavItem>
           <NavItem>
-            <NavLink href="/mint">Mint</NavLink>
+            <NavLink tag={Link} to="/mint">
+              Mint
+            </NavLink>
           </NavItem>
         </Nav>
         <ConnectWallet />
