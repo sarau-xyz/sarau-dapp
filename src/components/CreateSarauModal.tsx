@@ -30,7 +30,7 @@ const CreateSarauModal: React.FC<{
     form.append("name", data.name);
 
     const res = await axios.post<{ cid: string }>(
-      "ipfs-uploader.sarau.xyz",
+      "https://ipsf-uploader-production.up.railway.app/api/upload",
       form,
       {
         onUploadProgress: (progressEvent) => {
@@ -41,6 +41,8 @@ const CreateSarauModal: React.FC<{
         },
       }
     );
+
+    console.log(res.data);
 
     const cid = res.data.cid;
 
