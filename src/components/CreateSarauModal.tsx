@@ -29,7 +29,7 @@ const CreateSarauModal: React.FC<{
     form.append(file.name, file);
     form.append("name", data.name);
 
-    const res = await axios.post<{ cid: string }>(
+    const res = await axios.post<{ name: string; image: string }>(
       "https://ipsf-uploader-production.up.railway.app/api/upload",
       form,
       {
@@ -44,19 +44,19 @@ const CreateSarauModal: React.FC<{
 
     console.log(res.data);
 
-    const cid = res.data.cid;
+    const image = res.data.image;
 
-    return cid;
+    return image;
   }, [data, file, setUploadProgress]);
 
   const sendToBlockchain = useCallback(
-    async (cid: string) => {
+    async (image: string) => {
       // TODO look in contract for parameters
       const created = await sarauMaker!.createSarau(
         data.maxMint,
         data.startDate,
         data.endDate,
-        `ipfs://${cid}`,
+        image,
         data.homepage,
         data.name,
         data.symbol,
@@ -72,9 +72,11 @@ const CreateSarauModal: React.FC<{
 
   const doSteps = useCallback(async () => {
     setStep(1);
-    const cid = await sendToIPFS();
+    const image = await sendToIPFS();
     setStep(2);
-    const sarauCreated = await sendToBlockchain(cid);
+    const sarauCreated = await sendToBlockchain(image);
+
+    console.log(sarauCreated);
     setStep(3);
     setStep(4);
   }, [sendToIPFS, sendToBlockchain]);
