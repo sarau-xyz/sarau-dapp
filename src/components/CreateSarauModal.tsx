@@ -83,7 +83,7 @@ const CreateSarauModal: React.FC<{
 
   useEffect(() => {
     doSteps();
-  }, [doSteps]);
+  }, []);
 
   const makeStepIcon = (step: number, current: number) => {
     if (current > step) {
