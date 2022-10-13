@@ -1,5 +1,5 @@
 import { ethers } from "ethers";
-import React, { useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useEffect, useState } from "react";
 import {
   AiOutlineLoading3Quarters,
   AiOutlineClockCircle,
@@ -114,4 +114,4 @@ const CreateSarauModal: React.FC<{
   );
 };
 
-export default CreateSarauModal;
+export default memo(CreateSarauModal);
