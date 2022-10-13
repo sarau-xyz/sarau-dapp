@@ -26,7 +26,7 @@ const CreateSarauModal: React.FC<{
 
   const sendToIPFS = useCallback(async () => {
     const form = new FormData();
-    form.append(file.name, file);
+    form.append("file", file);
     form.append("name", data.name);
 
     const res = await axios.post<{ name: string; image: string }>(
