@@ -97,7 +97,7 @@ const CreateSarauModal: React.FC<{
 
   return (
     <Modal isOpen>
-      <ModalHeader>Creating your NFT</ModalHeader>
+      <ModalHeader>Creating your Sarau</ModalHeader>
       <ModalBody>
         <ListGroup>
           <ListGroupItem>
