@@ -12,17 +12,20 @@ import {
   Container,
 } from "reactstrap";
 import { ValidationError } from "yup";
-import CreateSarauModal from "../components/CreateSarauModal";
+import CreateSarauModal, {
+  useCreateSarauModal,
+} from "../components/CreateSarauModal";
 import CustomButton from "../components/forms/CustomButton";
 import CustomInput from "../components/forms/CustomInput";
 import { useSarauMaker } from "../hooks/useSarauMaker";
 import { createSarauSchema, CreateSarauForm } from "../schemas/manager";
 
 export default function Create() {
+  const sarauModal = useCreateSarauModal();
+
   const sarauMaker = useSarauMaker();
   const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
-  const [parsedData, setParsedData] = useState<CreateSarauForm>();
   const [file, setFile] = useState<File>();
   const [fileUrl, setFileUrl] = useState<string>();
 
@@ -43,6 +46,10 @@ export default function Create() {
       return cogoToast.error("please connect to the supported chain");
     }
 
+    if (!file) {
+      cogoToast.error("please select one file");
+    }
+
     try {
       setLoading(true);
       const tParsedData = await createSarauSchema.validate(data, {
@@ -50,7 +57,8 @@ export default function Create() {
       });
 
       console.log(tParsedData);
-      setParsedData(tParsedData);
+
+      sarauModal.doSteps(tParsedData, file!);
     } catch (err) {
       console.error(err);
 
@@ -72,9 +80,11 @@ export default function Create() {
 
   return (
     <>
-      {parsedData && file && (
-        <CreateSarauModal data={parsedData!} file={file} />
-      )}
+      <CreateSarauModal
+        currentStep={sarauModal.currentStep}
+        progress={sarauModal.uploadProgress}
+        isOpen={sarauModal.isOpen}
+      />
       <Card
         style={{
           maxWidth: 500,

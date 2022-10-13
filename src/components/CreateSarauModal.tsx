@@ -1,5 +1,4 @@
-import { ethers } from "ethers";
-import React, { memo, useCallback, useEffect, useState } from "react";
+import React, { memo, useCallback, useState } from "react";
 import {
   AiOutlineLoading3Quarters,
   AiOutlineClockCircle,
@@ -16,42 +15,47 @@ import { useSarauMaker } from "../hooks/useSarauMaker";
 import { CreateSarauForm } from "../schemas/manager";
 import axios from "axios";
 
-const CreateSarauModal: React.FC<{
-  data: CreateSarauForm;
-  file: File;
-}> = ({ data, file }) => {
+export const useCreateSarauModal = () => {
+  const [isOpen, setIsOpen] = useState(false);
   const sarauMaker = useSarauMaker();
   const [uploadProgress, setUploadProgress] = useState(0);
-  const [step, setStep] = useState(0);
+  const [currentStep, setStep] = useState(0);
 
-  const sendToIPFS = useCallback(async () => {
-    const form = new FormData();
-    form.append("file", file);
-    form.append("name", data.name);
+  const toggle = () => setIsOpen((oldState) => !oldState);
 
-    const res = await axios.post<{ name: string; image: string }>(
-      "https://ipsf-uploader-production.up.railway.app/api/upload",
-      form,
-      {
-        onUploadProgress: (progressEvent) => {
-          const percentage = Math.round(
-            (progressEvent.loaded * 100) / progressEvent.total
-          );
-          setUploadProgress(percentage);
-        },
-      }
-    );
+  const sendToIPFS = useCallback(
+    async (name: string, file: File) => {
+      const form = new FormData();
+      form.append("file", file);
+      form.append("name", name);
 
-    console.log(res.data);
+      const res = await axios.post<{ name: string; image: string }>(
+        "https://ipsf-uploader-production.up.railway.app/api/upload",
+        form,
+        {
+          onUploadProgress: (progressEvent) => {
+            const percentage = Math.round(
+              (progressEvent.loaded * 100) / progressEvent.total
+            );
+            setUploadProgress(percentage);
+          },
+        }
+      );
 
-    const image = res.data.image;
+      const image = res.data.image;
 
-    return image;
-  }, [data, file, setUploadProgress]);
+      return image;
+    },
+    [setUploadProgress]
+  );
 
   const sendToBlockchain = useCallback(
-    async (image: string) => {
+    async (data: CreateSarauForm, image: string) => {
       // TODO look in contract for parameters
+      const fee = await sarauMaker!.creationEtherFee();
+
+      console.log("fee", fee);
+
       const created = await sarauMaker!.createSarau(
         data.maxMint,
         data.startDate,
@@ -61,30 +65,38 @@ const CreateSarauModal: React.FC<{
         data.name,
         data.symbol,
         {
-          value: ethers.utils.parseUnits("1", "ether"),
+          value: fee,
         }
       );
 
       return created;
     },
-    [data, sarauMaker]
+    [sarauMaker]
   );
 
-  const doSteps = useCallback(async () => {
-    setStep(1);
-    const image = await sendToIPFS();
-    setStep(2);
-    const sarauCreated = await sendToBlockchain(image);
+  const doSteps = useCallback(
+    async (data: CreateSarauForm, file: File) => {
+      toggle();
+      setStep(1);
+      const image = await sendToIPFS(data.name, file);
+      setStep(2);
+      const sarauCreated = await sendToBlockchain(data, image);
 
-    console.log(sarauCreated);
-    setStep(3);
-    setStep(4);
-  }, [sendToIPFS, sendToBlockchain]);
+      console.log(sarauCreated);
+      setStep(3);
+      setStep(4);
+    },
+    [sendToIPFS, sendToBlockchain]
+  );
 
-  useEffect(() => {
-    doSteps();
-  }, []);
+  return { currentStep, isOpen, toggle, doSteps, uploadProgress };
+};
 
+const CreateSarauModal: React.FC<{
+  progress: number;
+  currentStep: number;
+  isOpen: boolean;
+}> = ({ progress, currentStep, isOpen }) => {
   const makeStepIcon = (step: number, current: number) => {
     if (current > step) {
       return <AiFillCheckCircle color="green" />;
@@ -96,18 +108,21 @@ const CreateSarauModal: React.FC<{
   };
 
   return (
-    <Modal isOpen>
+    <Modal isOpen={isOpen}>
       <ModalHeader>Creating your Sarau</ModalHeader>
       <ModalBody>
         <ListGroup>
           <ListGroupItem>
-            {makeStepIcon(1, step)} Sending your image to IPFS ({uploadProgress}
+            {makeStepIcon(1, currentStep)} Sending your image to IPFS (
+            {progress}
             %)
           </ListGroupItem>
           <ListGroupItem>
-            {makeStepIcon(2, step)} Requesting transaction to your wallet
+            {makeStepIcon(2, currentStep)} Requesting transaction to your wallet
           </ListGroupItem>
-          <ListGroupItem>{makeStepIcon(3, step)} Sarau created</ListGroupItem>
+          <ListGroupItem>
+            {makeStepIcon(3, currentStep)} Sarau created
+          </ListGroupItem>
         </ListGroup>
       </ModalBody>
     </Modal>
