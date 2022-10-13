@@ -30,7 +30,7 @@ const CreateSarauModal: React.FC<{
     form.append("name", data.name);
 
     const res = await axios.post<{ name: string; image: string }>(
-      "https://ipsf-uploader-production.up.railway.app/api/upload",
+      "https://ipsf-uploader.vercel.app/api/upload",
       form,
       {
         onUploadProgress: (progressEvent) => {
