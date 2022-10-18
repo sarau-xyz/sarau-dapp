@@ -1,4 +1,4 @@
 export const SARAU_MAKER_ADDRESSES: { [chainId: string]: string } = {
-  "44787": "0x6d79C6E87cd32829BD62746614Dd094BbdeB6B7A", // alfajores
+  "44787": "0x1B1fe91B4DDFdB408676DC51eA5F7248CD0EcB2B", // alfajores
   "42220": "", // celo
 };
