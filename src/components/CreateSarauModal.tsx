@@ -58,8 +58,8 @@ export const useCreateSarauModal = () => {
 
       const created = await sarauMaker!.createSarau(
         data.maxMint,
-        data.startDate,
-        data.endDate,
+        Math.floor(new Date(data.startDate).getTime() / 1000),
+        Math.floor(new Date(data.endDate).getTime() / 1000),
         image,
         data.homepage,
         data.name,
@@ -69,7 +69,9 @@ export const useCreateSarauModal = () => {
         }
       );
 
-      return created;
+      const tx = await created.wait();
+
+      return tx;
     },
     [sarauMaker]
   );
