@@ -9,8 +9,16 @@ import {
   Row,
 } from "reactstrap";
 import { FaLink } from "react-icons/fa";
+import { useLocation } from "react-router-dom";
+import { useMemo } from "react";
 
 export default function Mint() {
+  const { search } = useLocation();
+
+  const query = useMemo(() => new URLSearchParams(search), [search]);
+
+  console.log(query.get("id"));
+
   return (
     <Row>
       <Card
@@ -28,9 +36,6 @@ export default function Mint() {
           <CardTitle tag="h5">Build With Celo ReFi Hackathon '22</CardTitle>
           <CardSubtitle className="mb-2 text-muted" tag="h6">
             BWCH2022
-            
-                
-              
           </CardSubtitle>
           <CardText>
             {/* Some quick example text to build on the card title and make up the
@@ -38,7 +43,9 @@ export default function Mint() {
             <p style={{ cursor: "pointer" }}>
               <FaLink /> celo.org
             </p>
-            <p>Mint ends in <Badge>23h33s</Badge></p>
+            <p>
+              Mint ends in <Badge>23h33s</Badge>
+            </p>
           </CardText>
           <Button color="primary" block>
             Mint

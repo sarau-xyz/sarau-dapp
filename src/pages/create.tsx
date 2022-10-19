@@ -84,6 +84,7 @@ export default function Create() {
         currentStep={sarauModal.currentStep}
         progress={sarauModal.uploadProgress}
         isOpen={sarauModal.isOpen}
+        sarauCreated={sarauModal.sarauCreated}
       />
       <Card
         style={{

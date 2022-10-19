@@ -4,7 +4,10 @@ import {
   AiOutlineClockCircle,
   AiFillCheckCircle,
 } from "react-icons/ai";
+import { BsArrowUpRight } from "react-icons/bs";
 import {
+  Button,
+  Collapse,
   ListGroup,
   ListGroupItem,
   Modal,
@@ -14,11 +17,14 @@ import {
 import { useSarauMaker } from "../hooks/useSarauMaker";
 import { CreateSarauForm } from "../schemas/manager";
 import axios from "axios";
+import { ethers } from "ethers";
+import { Link } from "react-router-dom";
 
 export const useCreateSarauModal = () => {
   const [isOpen, setIsOpen] = useState(false);
   const sarauMaker = useSarauMaker();
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [sarauCreated, setSarauCreated] = useState<{ id: ethers.BigNumber }>();
   const [currentStep, setStep] = useState(0);
 
   const toggle = () => setIsOpen((oldState) => !oldState);
@@ -49,14 +55,13 @@ export const useCreateSarauModal = () => {
     [setUploadProgress]
   );
 
-  const sendToBlockchain = useCallback(
+  const createTx = useCallback(
     async (data: CreateSarauForm, image: string) => {
-      // TODO look in contract for parameters
       const fee = await sarauMaker!.creationEtherFee();
 
       console.log("fee", fee);
 
-      const created = await sarauMaker!.createSarau(
+      const tx = await sarauMaker!.createSarau(
         data.maxMint,
         Math.floor(new Date(data.startDate).getTime() / 1000),
         Math.floor(new Date(data.endDate).getTime() / 1000),
@@ -69,12 +74,20 @@ export const useCreateSarauModal = () => {
         }
       );
 
-      const tx = await created.wait();
-
       return tx;
     },
     [sarauMaker]
   );
+
+  const waitTx = useCallback(async (tx: any) => {
+    const waited = await tx.wait();
+
+    const event = waited.events.find(
+      (event: any) => event.event === "SarauCreated"
+    );
+
+    return event.args as { id: ethers.BigNumber };
+  }, []);
 
   const doSteps = useCallback(
     async (data: CreateSarauForm, file: File) => {
@@ -82,23 +95,27 @@ export const useCreateSarauModal = () => {
       setStep(1);
       const image = await sendToIPFS(data.name, file);
       setStep(2);
-      const sarauCreated = await sendToBlockchain(data, image);
-
-      console.log(sarauCreated);
+      const tx = await createTx(data, image);
       setStep(3);
-      setStep(4);
+      const res = await waitTx(tx);
+      console.log(res, "sarauCreated");
+      setSarauCreated(res);
+      setStep(5);
     },
-    [sendToIPFS, sendToBlockchain]
+    [sendToIPFS, createTx, waitTx]
   );
 
-  return { currentStep, isOpen, toggle, doSteps, uploadProgress };
+  return { currentStep, isOpen, toggle, doSteps, uploadProgress, sarauCreated };
 };
 
 const CreateSarauModal: React.FC<{
   progress: number;
   currentStep: number;
   isOpen: boolean;
-}> = ({ progress, currentStep, isOpen }) => {
+  sarauCreated?: {
+    id: ethers.BigNumber;
+  };
+}> = ({ progress, currentStep, isOpen, sarauCreated }) => {
   const makeStepIcon = (step: number, current: number) => {
     if (current > step) {
       return <AiFillCheckCircle color="green" />;
@@ -123,9 +140,19 @@ const CreateSarauModal: React.FC<{
             {makeStepIcon(2, currentStep)} Requesting transaction to your wallet
           </ListGroupItem>
           <ListGroupItem>
-            {makeStepIcon(3, currentStep)} Sarau created
+            {makeStepIcon(3, currentStep)} Waiting for blockchain
+          </ListGroupItem>
+          <ListGroupItem>
+            {makeStepIcon(4, currentStep)} Sarau created
           </ListGroupItem>
         </ListGroup>
+        <Collapse isOpen={sarauCreated !== undefined}>
+          <Link to={`/mint?id=${sarauCreated?.id.toString()}`}>
+            <Button block className="mt-3" color="info">
+              See your Sarau mint page <BsArrowUpRight size={10} />
+            </Button>
+          </Link>
+        </Collapse>
       </ModalBody>
     </Modal>
   );

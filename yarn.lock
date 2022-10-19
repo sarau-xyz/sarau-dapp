@@ -1218,6 +1218,11 @@
     stream-browserify "^3.0.0"
     util "^0.12.4"
 
+"@coinsamba/react-tiny-hooks@^0.3.2":
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/@coinsamba/react-tiny-hooks/-/react-tiny-hooks-0.3.2.tgz#abda4f2a6f56e48e0ec9cbd3d5a018bd194ca600"
+  integrity sha512-+1Sp+JEl6MoQdE09L4HseR4W4nwOljauHaPCDcghu7+fkLLh7mgHRKVG1TqVF2t43RGL86tAqCTIJUsZZfZl1w==
+
 "@csstools/normalize.css@*":
   version "12.0.0"
   resolved "https://registry.yarnpkg.com/@csstools/normalize.css/-/normalize.css-12.0.0.tgz#a9583a75c3f150667771f30b60d9f059473e62c4"
