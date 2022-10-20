@@ -1,5 +1,5 @@
-import "bootstrap/dist/css/bootstrap.min.css";
-import { WagmiConfig, createClient } from "wagmi";
+import { WagmiConfig, createClient, configureChains } from "wagmi";
+import { publicProvider } from "wagmi/providers/public";
 import { getDefaultProvider } from "ethers";
 import Header from "./components/Header";
 import Create from "./pages/create";
@@ -8,10 +8,17 @@ import { Container } from "reactstrap";
 import Mint from "./pages/mint";
 import "./App.css";
 import Home from "./pages/home";
+import { CUSTOM_CHAINS } from "./constants/CUSTOM_CHAINS";
+import { InjectedConnector } from "wagmi/connectors/injected";
+
+const chains = Object.values(CUSTOM_CHAINS);
+
+const { provider } = configureChains(chains, [publicProvider()]);
 
 const client = createClient({
   autoConnect: true,
-  provider: getDefaultProvider(),
+  connectors: [new InjectedConnector({ chains })],
+  provider,
 });
 
 function App() {

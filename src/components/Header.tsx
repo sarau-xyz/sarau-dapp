@@ -12,6 +12,8 @@ import {
 import ConnectWallet from "./ConnectWallet";
 
 function Header() {
+ 
+
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -19,7 +21,7 @@ function Header() {
   return (
     <Navbar expand="md">
       <NavbarBrand tag={Link} to="/">
-        Sarau.xyz
+        Sarau.xyz 
       </NavbarBrand>
       <NavbarToggler onClick={toggle} />
       <Collapse isOpen={isOpen} navbar>
