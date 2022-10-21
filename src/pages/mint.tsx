@@ -4,33 +4,61 @@ import {
   Card,
   CardBody,
   CardSubtitle,
-  CardText,
   CardTitle,
   Row,
 } from "reactstrap";
 import { FaLink } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
-import { useCallback, useEffect, useMemo } from "react";
-import { useSarauMaker } from "../hooks/useSarauMaker";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useSarauNFT } from "../hooks/useSarauNFT";
+import { format, fromUnixTime } from "date-fns";
+import axios from "axios";
+import { useAccount, useConnect } from "wagmi";
+import { ethers } from "ethers";
+
+const parseIpfsUrl = (ipfsUrl: string) =>
+  `https://cloudflare-ipfs.com/ipfs/${ipfsUrl.replace("ipfs://", "")}`;
 
 export default function Mint() {
+  const { connect } = useConnect();
+  const account = useAccount();
+  const [imageUrl, setImageUrl] = useState("");
   const { search } = useLocation();
-  const sarauMaker = useSarauMaker();
 
   const query = useMemo(() => new URLSearchParams(search), [search]);
 
-  console.log(query.get("id"));
+  const sarauId = useMemo(() => query.get("id"), [query]);
 
-  const getSarauInfo = useCallback(async () => {
-    // todo pass this contract address to ethers.Contract 
-    const res = await sarauMaker!.callStatic.getSarau(query.get("id"));
+  const sarauNFT = useSarauNFT(sarauId);
 
-    console.log(res, "getSarau");
-  }, [sarauMaker]);
+  const getNFTImage = useCallback(async () => {
+    const { data: metadata } = await axios.get<{ image: string }>(
+      parseIpfsUrl(sarauNFT.nftData!.tokenURI!)
+    );
+
+    setImageUrl(parseIpfsUrl(metadata.image));
+  }, [sarauNFT]);
 
   useEffect(() => {
-    getSarauInfo();
-  });
+    if (sarauNFT.nftData) {
+      getNFTImage();
+    }
+  }, [sarauNFT.nftData, getNFTImage]);
+
+  const handleMint = useCallback(async () => {
+    if (!account.address) {
+      connect();
+    } else {
+      const res = await sarauNFT.writeContract!.mint(
+        ethers.utils.parseBytes32String("")
+      );
+      console.log(res, "res");
+
+      const tx = await res.wait();
+
+      console.log(tx, "tx");
+    }
+  }, [sarauNFT, account]);
 
   return (
     <Row>
@@ -40,30 +68,56 @@ export default function Mint() {
         }}
         className="mx-auto"
       >
-        <img
-          alt="Sample"
-          src="https://static.crypto.com/token/icons/celo/color_icon.png"
-          className="mt-3"
-        />
-        <CardBody>
-          <CardTitle tag="h5">Build With Celo ReFi Hackathon '22</CardTitle>
-          <CardSubtitle className="mb-2 text-muted" tag="h6">
-            BWCH2022
-          </CardSubtitle>
-          <CardText>
+        <img alt="Sample" src={imageUrl} className="mt-3" />
+        {sarauNFT.nftData && (
+          <CardBody>
+            <CardTitle tag="h5">{sarauNFT.nftData?.name}</CardTitle>
+            <CardSubtitle className="mb-2 text-muted" tag="h6">
+              {sarauNFT.nftData?.symbol}
+            </CardSubtitle>
             {/* Some quick example text to build on the card title and make up the
             bulk of the card‘s content. */}
-            <p style={{ cursor: "pointer" }}>
-              <FaLink /> celo.org
+            <a
+              href={sarauNFT.nftData?.homepage}
+              target="_blank"
+              rel="noreferrer"
+            >
+              <FaLink /> {sarauNFT.nftData?.homepage}
+            </a>
+            <p>
+              Mint start date{" "}
+              <Badge>
+                {format(
+                  fromUnixTime(sarauNFT.nftData?.startDate.toNumber()),
+                  "dd/MM/yyyy"
+                )}{" "}
+              </Badge>
             </p>
             <p>
-              Mint ends in <Badge>23h33s</Badge>
+              Mint end date{" "}
+              <Badge>
+                {format(
+                  fromUnixTime(sarauNFT.nftData?.endDate.toNumber()),
+                  "dd/MM/yyyy"
+                )}
+              </Badge>
             </p>
-          </CardText>
-          <Button color="primary" block>
-            Mint
-          </Button>
-        </CardBody>
+            <Button
+              color="primary"
+              block
+              disabled={!sarauNFT.isOnMintWindow}
+              onClick={handleMint}
+            >
+              {sarauNFT.isOnMintWindow
+                ? !account.address
+                  ? "Connect wallet"
+                  : "Mint now"
+                : sarauNFT.isBeforeEnd
+                ? "Mint will start soon"
+                : "Mint ended"}
+            </Button>
+          </CardBody>
+        )}
       </Card>
     </Row>
   );

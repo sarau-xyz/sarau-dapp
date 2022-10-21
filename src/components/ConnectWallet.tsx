@@ -1,15 +1,12 @@
 import React from "react";
 import { Button } from "reactstrap";
 import { useAccount, useConnect } from "wagmi";
-import { InjectedConnector } from "wagmi/connectors/injected";
 import { truncateMiddle } from "../utils/truncateMiddle";
 import { FaLink } from "react-icons/fa";
 
 const ConnectWallet: React.FC = () => {
   const { address, isConnected } = useAccount();
-  const { connect } = useConnect({
-    connector: new InjectedConnector(),
-  });
+  const { connect } = useConnect();
 
   return (
     <Button color="info" onClick={() => connect()}>

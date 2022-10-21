@@ -42,7 +42,7 @@ export default function Create() {
   }, [file]);
 
   const handleFormSubmit = async (data: CreateSarauForm) => {
-    if (!sarauMaker) {
+    if (!sarauMaker.writeContract) {
       return cogoToast.error("please connect to the supported chain");
     }
 

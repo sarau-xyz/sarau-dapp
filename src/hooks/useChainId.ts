@@ -1,14 +1,14 @@
-import { useMemo } from "react";
-import { useNetwork } from "wagmi";
+import { createContext, useContext } from "react";
+
+type ChainIdContextProps = {
+  chainId: number;
+  setChainId: (num: number) => void;
+};
+
+export const ChainIdContext = createContext({} as ChainIdContextProps);
 
 export const useChainId = () => {
-  const { chain, chains } = useNetwork();
+  const ctx = useContext(ChainIdContext);
 
-  const chainId = useMemo(() => {
-    console.log(chain, "chain");
-    console.log(chains, "chains");
-    return 44787; // todo get this from context
-  }, [chain]);
-
-  return chainId;
+  return ctx;
 };

@@ -1,6 +1,5 @@
 import { WagmiConfig, createClient, configureChains } from "wagmi";
 import { publicProvider } from "wagmi/providers/public";
-import { getDefaultProvider } from "ethers";
 import Header from "./components/Header";
 import Create from "./pages/create";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -10,6 +9,7 @@ import "./App.css";
 import Home from "./pages/home";
 import { CUSTOM_CHAINS } from "./constants/CUSTOM_CHAINS";
 import { InjectedConnector } from "wagmi/connectors/injected";
+import { ChainIdProvider } from "./providers/ChainIdProvider";
 
 const { chains, provider } = configureChains(Object.values(CUSTOM_CHAINS), [
   publicProvider(),
@@ -31,18 +31,20 @@ const client = createClient({
 
 function App() {
   return (
-    <Router>
+    <ChainIdProvider>
       <WagmiConfig client={client}>
-        <Header />
-        <Container>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/create" element={<Create />} />
-            <Route path="/mint" element={<Mint />} />
-          </Routes>
-        </Container>
+        <Router>
+          <Header />
+          <Container>
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/create" element={<Create />} />
+              <Route path="/mint" element={<Mint />} />
+            </Routes>
+          </Container>
+        </Router>
       </WagmiConfig>
-    </Router>
+    </ChainIdProvider>
   );
 }
 

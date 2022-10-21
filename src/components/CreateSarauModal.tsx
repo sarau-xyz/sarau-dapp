@@ -57,18 +57,18 @@ export const useCreateSarauModal = () => {
 
   const createTx = useCallback(
     async (data: CreateSarauForm, image: string) => {
-      const fee = await sarauMaker!.creationEtherFee();
+      const fee = await sarauMaker.writeContract!.creationEtherFee();
 
       console.log("fee", fee);
 
-      const tx = await sarauMaker!.createSarau(
+      const tx = await sarauMaker.writeContract!.createSarau(
         data.maxMint,
         Math.floor(new Date(data.startDate).getTime() / 1000),
         Math.floor(new Date(data.endDate).getTime() / 1000),
-        image,
         data.homepage,
         data.name,
         data.symbol,
+        image,
         {
           value: fee,
         }
