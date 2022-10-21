@@ -10,14 +10,27 @@ import {
 } from "reactstrap";
 import { FaLink } from "react-icons/fa";
 import { useLocation } from "react-router-dom";
-import { useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
+import { useSarauMaker } from "../hooks/useSarauMaker";
 
 export default function Mint() {
   const { search } = useLocation();
+  const sarauMaker = useSarauMaker();
 
   const query = useMemo(() => new URLSearchParams(search), [search]);
 
   console.log(query.get("id"));
+
+  const getSarauInfo = useCallback(async () => {
+    // todo pass this contract address to ethers.Contract 
+    const res = await sarauMaker!.callStatic.getSarau(query.get("id"));
+
+    console.log(res, "getSarau");
+  }, [sarauMaker]);
+
+  useEffect(() => {
+    getSarauInfo();
+  });
 
   return (
     <Row>

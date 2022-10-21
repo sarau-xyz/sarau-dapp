@@ -1,16 +1,9 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button, Container } from "reactstrap";
-import { useNetwork, useSwitchNetwork } from "wagmi";
+import { BlockNumber } from "../components/BlockNumber";
 
 const Home: React.FC = () => {
-  const { chain, chains } = useNetwork();
-  const { error, isLoading, pendingChainId, switchNetwork } =
-    useSwitchNetwork();
-
-
-    
-
   return (
     <div className="bd-masthead mb-3" id="content">
       <div className="container-xxl bd-gutter">
@@ -51,19 +44,7 @@ const Home: React.FC = () => {
         </div>
       </div>
       <Container>
-      {chain && <div>Connected to {chain.name}</div>}
-      {chains.map((x) => (
-        <button
-          // disabled={!switchNetwork || x.id === chain?.id}
-          key={x.id}
-          onClick={() => switchNetwork?.(x.id)}
-        >
-          {x.name}
-          {isLoading && pendingChainId === x.id && ' (switching)'}
-        </button>
-      ))}
-
-      <div>{error && error.message}</div>
+        <BlockNumber />
       </Container>
     </div>
   );

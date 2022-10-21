@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
-import { useAccount } from "wagmi";
+import { useMemo } from "react";
+import { useNetwork } from "wagmi";
 
 export const useChainId = () => {
-  const { connector } = useAccount();
-  const [chainId, setChainId] = useState(0);
+  const { chain, chains } = useNetwork();
 
-  useEffect(() => {
-    if (connector) {
-      connector.getChainId().then((res) => setChainId(res));
-    }
-  }, [connector]);
+  const chainId = useMemo(() => {
+    console.log(chain, "chain");
+    console.log(chains, "chains");
+    return 44787; // todo get this from context
+  }, [chain]);
 
   return chainId;
 };

@@ -11,13 +11,21 @@ import Home from "./pages/home";
 import { CUSTOM_CHAINS } from "./constants/CUSTOM_CHAINS";
 import { InjectedConnector } from "wagmi/connectors/injected";
 
-const chains = Object.values(CUSTOM_CHAINS);
-
-const { provider } = configureChains(chains, [publicProvider()]);
+const { chains, provider } = configureChains(Object.values(CUSTOM_CHAINS), [
+  publicProvider(),
+]);
 
 const client = createClient({
   autoConnect: true,
-  connectors: [new InjectedConnector({ chains })],
+  connectors: [
+    new InjectedConnector({
+      chains,
+      options: {
+        name: "Injected",
+        shimDisconnect: true,
+      },
+    }),
+  ],
   provider,
 });
 
