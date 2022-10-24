@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useMemo, useState } from "react";
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { Card, Button } from "reactstrap";
 import { useAccount } from "wagmi";
@@ -13,28 +13,19 @@ const containerId = "recaptcha";
 const RequestCelo: React.FC = () => {
   const account = useAccount();
   const [loading, setIsLoading] = useState(false);
-  const [captchaResponse, setCaptchaResponse] = useState("");
   const { chainId } = useChainId();
 
   const successCallback = (response: string) => {
-    setCaptchaResponse(response);
+    requestCelo(response);
   };
-
-  const expiredCallback = () => setCaptchaResponse("");
 
   const { recaptchaLoaded, execute, reset } = useRecaptcha({
     containerId,
     successCallback,
-    expiredCallback,
     sitekey: process.env.REACT_APP_CAPTCHA_SITE_KEY,
     size: "invisible",
     errorCallback: (e: any) => console.error(e),
   });
-
-  const executeCaptcha = useCallback(() => {
-    reset();
-    execute();
-  }, [reset, execute]);
 
   const networkSupport = useMemo(() => {
     return [CUSTOM_CHAINS.alfajores.id, CUSTOM_CHAINS.celo.id].includes(
@@ -43,16 +34,19 @@ const RequestCelo: React.FC = () => {
   }, [chainId]);
 
   const requestCelo = useCallback(
-    async (address: string) => {
+    async (captcha: string) => {
       if (networkSupport) {
         try {
           const form = new FormData();
-          form.append("token", captchaResponse);
+          console.log(captcha, "captchaResponse");
+          form.append("token", captcha);
+          form.append("address", account.address ?? "");
+
           setIsLoading(true);
           await axios.post(
             `https://dust.sarau.xyz/api/${
               chainId === CUSTOM_CHAINS.alfajores.id ? "alfajores" : "celo"
-            }?address=${address}`,
+            }`,
             form
           );
         } catch (error) {
@@ -62,21 +56,20 @@ const RequestCelo: React.FC = () => {
         }
       }
     },
-    [networkSupport, captchaResponse, chainId]
+    [networkSupport, chainId, account.address]
   );
 
-  useEffect(() => {
-    if (recaptchaLoaded && !captchaResponse) {
-      executeCaptcha();
-    }
-  }, [recaptchaLoaded, captchaResponse, executeCaptcha]);
+  const executeCaptcha = useCallback(async () => {
+    await reset();
+    await execute();
+  }, [reset, execute]);
 
   return (
     <Card body className="mb-3">
       <Button
         color="primary"
         disabled={!recaptchaLoaded || !account.address || loading}
-        onClick={() => requestCelo(account.address ?? "")}
+        onClick={() => executeCaptcha()}
         id={containerId}
       >
         {loading && <AiOutlineLoading3Quarters className="spin" />}

@@ -43,7 +43,8 @@ export default function Mint() {
     if (sarauNFT.nftData) {
       getNFTImage();
     }
-  }, [sarauNFT.nftData, getNFTImage]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sarauNFT.nftData]);
 
   const handleMint = useCallback(async () => {
     if (!account.address) {

@@ -73,7 +73,8 @@ export const useSarauNFT = (sarauId: string | null) => {
 
   useEffect(() => {
     getSarauNFTAddress();
-  }, [getSarauNFTAddress]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const isAfterStart = useMemo(
     () =>
