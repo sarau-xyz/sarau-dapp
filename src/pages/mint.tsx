@@ -10,18 +10,19 @@ import {
   intervalToDuration,
 } from "date-fns";
 import axios from "axios";
-import { useAccount, useBalance, useConnect } from "wagmi";
+import { useAccount, useConnect } from "wagmi";
 import { ethers } from "ethers";
 import ShimmerMintCard from "../components/ShimmerMintCard";
 import RequestCelo from "../components/RequestCelo";
+import CustomButton from "../components/forms/CustomButton";
 
 const parseIpfsUrl = (ipfsUrl: string) =>
   `https://cloudflare-ipfs.com/ipfs/${ipfsUrl.replace("ipfs://", "")}`;
 
 export default function Mint() {
-  const { connect } = useConnect();
+  const [loading, setLoading] = useState(false);
+  const { connect, connectors } = useConnect();
   const account = useAccount();
-  const balance = useBalance({ addressOrName: account.address });
   const [imageUrl, setImageUrl] = useState("");
   const { search } = useLocation();
 
@@ -47,8 +48,9 @@ export default function Mint() {
   }, [sarauNFT.nftData]);
 
   const handleMint = useCallback(async () => {
+    setLoading(true);
     if (!account.address) {
-      connect();
+      connect({ connector: connectors.at(0) });
     } else {
       const res = await sarauNFT.writeContract!.mint(
         ethers.utils.formatBytes32String("")
@@ -58,7 +60,10 @@ export default function Mint() {
       const tx = await res.wait();
 
       console.log(tx, "tx");
+
+      await sarauNFT.getSarauNFTInfos();
     }
+    setLoading(false);
   }, [sarauNFT, account, connect]);
 
   return (
@@ -112,17 +117,15 @@ export default function Mint() {
               </b>
             </p>
 
-            {balance.data &&
-              balance.data.value.eq(ethers.BigNumber.from(0)) && (
-                <RequestCelo />
-              )}
+            <RequestCelo />
 
-            <Button
+            <CustomButton
               color="primary"
               block
               disabled={!sarauNFT.isOnMintWindow}
               onClick={handleMint}
               className="glowing"
+              loading={loading}
             >
               {sarauNFT.isOnMintWindow
                 ? !account.address
@@ -131,7 +134,7 @@ export default function Mint() {
                 : sarauNFT.isBeforeEnd
                 ? "Mint will start soon"
                 : "Mint ended"}
-            </Button>
+            </CustomButton>
             {sarauNFT.isOnMintWindow && (
               <p className="text-center">
                 <small>

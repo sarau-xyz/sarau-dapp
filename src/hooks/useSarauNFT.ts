@@ -114,5 +114,6 @@ export const useSarauNFT = (sarauId: string | null) => {
     isBeforeEnd,
     isOnMintWindow,
     dateNow,
+    getSarauNFTInfos,
   };
 };

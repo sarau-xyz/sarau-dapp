@@ -1,15 +1,23 @@
 import React from "react";
 import { Button } from "reactstrap";
-import { useAccount, useConnect } from "wagmi";
+import { useAccount, useClient, useConnect } from "wagmi";
 import { truncateMiddle } from "../utils/truncateMiddle";
 import { FaLink } from "react-icons/fa";
 
 const ConnectWallet: React.FC = () => {
+  const client = useClient();
   const { address, isConnected } = useAccount();
-  const { connect } = useConnect();
+  const { connect, connectors } = useConnect();
 
   return (
-    <Button color="info" onClick={() => connect()}>
+    <Button
+      color="info"
+      onClick={() =>
+        connect({
+          connector: connectors.at(0),
+        })
+      }
+    >
       {isConnected ? (
         truncateMiddle(address!, 4, 4, 6)
       ) : (
