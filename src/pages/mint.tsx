@@ -1,20 +1,19 @@
-import {
-  Badge,
-  Button,
-  Card,
-  CardBody,
-  CardSubtitle,
-  CardTitle,
-  Row,
-} from "reactstrap";
-import { FaLink } from "react-icons/fa";
+import { Button, Card, CardSubtitle, CardTitle, Col, Row } from "reactstrap";
+import { VscDebugBreakpointLog } from "react-icons/vsc";
 import { useLocation } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSarauNFT } from "../hooks/useSarauNFT";
-import { format, fromUnixTime } from "date-fns";
+import {
+  format,
+  fromUnixTime,
+  formatDuration,
+  intervalToDuration,
+} from "date-fns";
 import axios from "axios";
-import { useAccount, useConnect } from "wagmi";
+import { useAccount, useBalance, useConnect } from "wagmi";
 import { ethers } from "ethers";
+import ShimmerMintCard from "../components/ShimmerMintCard";
+import RequestCelo from "../components/RequestCelo";
 
 const parseIpfsUrl = (ipfsUrl: string) =>
   `https://cloudflare-ipfs.com/ipfs/${ipfsUrl.replace("ipfs://", "")}`;
@@ -22,6 +21,7 @@ const parseIpfsUrl = (ipfsUrl: string) =>
 export default function Mint() {
   const { connect } = useConnect();
   const account = useAccount();
+  const balance = useBalance({ addressOrName: account.address });
   const [imageUrl, setImageUrl] = useState("");
   const { search } = useLocation();
 
@@ -50,7 +50,7 @@ export default function Mint() {
       connect();
     } else {
       const res = await sarauNFT.writeContract!.mint(
-        ethers.utils.parseBytes32String("")
+        ethers.utils.formatBytes32String("")
       );
       console.log(res, "res");
 
@@ -58,55 +58,70 @@ export default function Mint() {
 
       console.log(tx, "tx");
     }
-  }, [sarauNFT, account]);
+  }, [sarauNFT, account, connect]);
 
   return (
-    <Row>
-      <Card
-        style={{
-          width: "18rem",
-        }}
-        className="mx-auto"
-      >
-        <img alt="Sample" src={imageUrl} className="mt-3" />
-        {sarauNFT.nftData && (
-          <CardBody>
+    <Col>
+      <Row>
+        {sarauNFT.nftData ? (
+          <Card
+            style={{
+              maxWidth: 500,
+            }}
+            className="mx-auto border-0 shadow"
+            body
+          >
             <CardTitle tag="h5">{sarauNFT.nftData?.name}</CardTitle>
             <CardSubtitle className="mb-2 text-muted" tag="h6">
-              {sarauNFT.nftData?.symbol}
+              {sarauNFT.nftData?.symbol} <VscDebugBreakpointLog />{" "}
+              <a
+                href={sarauNFT.nftData?.homepage}
+                target="_blank"
+                rel="noreferrer"
+              >
+                {sarauNFT.nftData?.homepage}
+              </a>
             </CardSubtitle>
-            {/* Some quick example text to build on the card title and make up the
-            bulk of the card‘s content. */}
-            <a
-              href={sarauNFT.nftData?.homepage}
-              target="_blank"
-              rel="noreferrer"
-            >
-              <FaLink /> {sarauNFT.nftData?.homepage}
-            </a>
+            <img
+              alt="Sample"
+              src={imageUrl}
+              className="my-3 img-fluid rounded"
+            />
             <p>
-              Mint start date{" "}
-              <Badge>
+              Minted:{" "}
+              <b>
+                {sarauNFT.nftData.totalSupply.toNumber()}/
+                {sarauNFT.nftData.maxMint.toNumber()}
+              </b>
+            </p>
+            <p>
+              Mint period:{" "}
+              <b>
                 {format(
                   fromUnixTime(sarauNFT.nftData?.startDate.toNumber()),
-                  "dd/MM/yyyy"
-                )}{" "}
-              </Badge>
-            </p>
-            <p>
-              Mint end date{" "}
-              <Badge>
+                  "dd/MM/yyyy HH:mm"
+                )}
+              </b>
+              {" - "}
+              <b>
                 {format(
                   fromUnixTime(sarauNFT.nftData?.endDate.toNumber()),
-                  "dd/MM/yyyy"
+                  "dd/MM/yyyy HH:mm"
                 )}
-              </Badge>
+              </b>
             </p>
+
+            {balance.data &&
+              balance.data.value.eq(ethers.BigNumber.from(0)) && (
+                <RequestCelo />
+              )}
+
             <Button
               color="primary"
               block
               disabled={!sarauNFT.isOnMintWindow}
               onClick={handleMint}
+              className="glowing"
             >
               {sarauNFT.isOnMintWindow
                 ? !account.address
@@ -116,9 +131,27 @@ export default function Mint() {
                 ? "Mint will start soon"
                 : "Mint ended"}
             </Button>
-          </CardBody>
+            {sarauNFT.isOnMintWindow && (
+              <p className="text-center">
+                <small>
+                  Ending in{" "}
+                  {formatDuration(
+                    intervalToDuration({
+                      start: sarauNFT.dateNow,
+                      end: fromUnixTime(sarauNFT.nftData.endDate.toNumber()),
+                    }),
+                    {
+                      delimiter: ", ",
+                    }
+                  )}
+                </small>
+              </p>
+            )}
+          </Card>
+        ) : (
+          <ShimmerMintCard />
         )}
-      </Card>
-    </Row>
+      </Row>
+    </Col>
   );
 }

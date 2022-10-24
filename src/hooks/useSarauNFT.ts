@@ -20,6 +20,7 @@ export const useSarauNFT = (sarauId: string | null) => {
     homepage: string;
     tokenURI: string;
   }>();
+  const [dateNow, setDateNow] = useState(new Date());
 
   const readContract = useMemo(() => {
     if (sarauId && nftAddress) {
@@ -77,23 +78,31 @@ export const useSarauNFT = (sarauId: string | null) => {
   const isAfterStart = useMemo(
     () =>
       nftData
-        ? isAfter(Date.now(), fromUnixTime(nftData.startDate.toNumber()))
+        ? isAfter(dateNow, fromUnixTime(nftData.startDate.toNumber()))
         : false,
-    [nftData]
+    [nftData, dateNow]
   );
 
   const isBeforeEnd = useMemo(
     () =>
       nftData
-        ? isBefore(Date.now(), fromUnixTime(nftData.endDate.toNumber()))
+        ? isBefore(dateNow, fromUnixTime(nftData.endDate.toNumber()))
         : false,
-    [nftData]
+    [nftData, dateNow]
   );
 
   const isOnMintWindow = useMemo(
     () => isAfterStart && isBeforeEnd,
     [isAfterStart, isBeforeEnd]
   );
+
+  useEffect(() => {
+    const tickInterval = setInterval(() => {
+      setDateNow(new Date());
+    }, 1000);
+
+    return () => clearInterval(tickInterval);
+  }, []);
 
   return {
     nftAddress,
@@ -103,5 +112,6 @@ export const useSarauNFT = (sarauId: string | null) => {
     isAfterStart,
     isBeforeEnd,
     isOnMintWindow,
+    dateNow,
   };
 };

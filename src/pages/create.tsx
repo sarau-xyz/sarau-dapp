@@ -11,6 +11,7 @@ import {
   Row,
   Container,
 } from "reactstrap";
+import { useAccount, useBalance } from "wagmi";
 import { ValidationError } from "yup";
 import CreateSarauModal, {
   useCreateSarauModal,
@@ -22,7 +23,8 @@ import { createSarauSchema, CreateSarauForm } from "../schemas/manager";
 
 export default function Create() {
   const sarauModal = useCreateSarauModal();
-
+  const account = useAccount();
+  const balance = useBalance({ addressOrName: account.address });
   const sarauMaker = useSarauMaker();
   const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
@@ -90,8 +92,8 @@ export default function Create() {
         style={{
           maxWidth: 500,
         }}
+        className="mx-auto border-0 shadow"
         body
-        className="mx-auto"
       >
         <Form ref={formRef} onSubmit={handleFormSubmit}>
           <FormGroup>
@@ -191,9 +193,16 @@ export default function Create() {
             color="primary"
             className="mt-3"
             type="submit"
+            block
           >
-            Create
+            Create ({sarauMaker.etherFee.toNumber()} CELO)
           </CustomButton>
+          {balance.data && balance.data.value.lt(sarauMaker.etherFee) && (
+            <small>
+              You don't have enough balance to create a Sarau, you need at least{" "}
+              {sarauMaker.etherFee.toNumber()} plus network fees.
+            </small>
+          )}
         </Form>
       </Card>
     </>
