@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { useProvider, useSigner } from "wagmi";
+import { useAccount, useProvider, useSigner } from "wagmi";
 import { SARAU_MAKER_ADDRESSES } from "../constants/SARAU_MAKER_ADDRESSES";
 import abi from "../static/abis/SarauMaker.json";
 import { useChainId } from "./useChainId";
@@ -8,9 +8,11 @@ import { WrapperBuilder } from "redstone-evm-connector";
 
 export const useSarauMaker = () => {
   const { data: signer } = useSigner();
+  const account = useAccount();
   const provider = useProvider();
   const { chainId } = useChainId();
   const [etherFee, setEtherFee] = useState(ethers.BigNumber.from("0"));
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const writeContract = useMemo(() => {
     if (chainId && SARAU_MAKER_ADDRESSES[chainId] && signer) {
@@ -45,5 +47,33 @@ export const useSarauMaker = () => {
     getSarauCreationEtherFee();
   }, [getSarauCreationEtherFee]);
 
-  return { readContract, writeContract, getSarauCreationEtherFee, etherFee };
+  const getIsAdmin = useCallback(async () => {
+    if (account.address && readContract) {
+      const isAdmin = await readContract.callStatic.hasRole(
+        ethers.utils.formatBytes32String(""),
+        account.address
+      );
+
+      setIsAdmin(isAdmin);
+    }
+  }, [account.address, readContract]);
+
+  useEffect(() => {
+    getIsAdmin();
+  }, [getIsAdmin]);
+
+  const updateCeloPrice = useCallback(async ()=> {
+    if (writeContract) {
+      await writeContract.updateEtherPrice();
+    }
+  }, [writeContract]);
+
+  return {
+    readContract,
+    writeContract,
+    getSarauCreationEtherFee,
+    etherFee,
+    isAdmin,
+    updateCeloPrice,
+  };
 };

@@ -10,8 +10,10 @@ import {
   NavItem,
   NavLink,
 } from "reactstrap";
+import { useSarauMaker } from "../hooks/useSarauMaker";
 
 function Header() {
+  const sarauMaker = useSarauMaker();
   const [isOpen, setIsOpen] = useState(false);
 
   const toggle = () => setIsOpen(!isOpen);
@@ -34,6 +36,11 @@ function Header() {
               Mint
             </NavLink>
           </NavItem>
+          {sarauMaker.isAdmin && (
+            <NavItem onClick={() => sarauMaker.updateCeloPrice()}>
+              <NavLink>Update CELO price</NavLink>
+            </NavItem>
+          )}
         </Nav>
         <ConnectButton />
       </Collapse>

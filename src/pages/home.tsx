@@ -1,7 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { Button, Container } from "reactstrap";
-import { BlockNumber } from "../components/BlockNumber";
+import { Button } from "reactstrap";
 
 const Home: React.FC = () => {
   return (
@@ -43,9 +42,6 @@ const Home: React.FC = () => {
           </p>
         </div>
       </div>
-      <Container>
-        <BlockNumber />
-      </Container>
     </div>
   );
 };

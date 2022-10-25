@@ -5,7 +5,7 @@ export const CUSTOM_CHAINS: {
 } = {
   alfajores: {
     id: 44787,
-    name: "Celo (Alfajores Testnet",
+    name: "Celo (Alfajores Testnet)",
     network: "alfajores",
     nativeCurrency: {
       decimals: 18,

@@ -61,7 +61,7 @@ function App() {
   return (
     <ChainIdProvider>
       <WagmiConfig client={client}>
-        <RainbowKitProvider chains={chains}>
+        <RainbowKitProvider coolMode chains={chains}>
           <Router>
             <Header />
             <Container>
