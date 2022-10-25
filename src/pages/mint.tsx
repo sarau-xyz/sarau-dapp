@@ -10,7 +10,7 @@ import {
   intervalToDuration,
 } from "date-fns";
 import axios from "axios";
-import { useAccount, useConnect } from "wagmi";
+import { useAccount } from "wagmi";
 import { ethers } from "ethers";
 import ShimmerMintCard from "../components/ShimmerMintCard";
 import RequestCelo from "../components/RequestCelo";
