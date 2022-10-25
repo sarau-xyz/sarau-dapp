@@ -1,4 +1,4 @@
-import { Button, Card, CardSubtitle, CardTitle, Col, Row } from "reactstrap";
+import { Card, CardSubtitle, CardTitle, Col, Row } from "reactstrap";
 import { VscDebugBreakpointLog } from "react-icons/vsc";
 import { useLocation } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -15,13 +15,14 @@ import { ethers } from "ethers";
 import ShimmerMintCard from "../components/ShimmerMintCard";
 import RequestCelo from "../components/RequestCelo";
 import CustomButton from "../components/forms/CustomButton";
+import { useConnectModal } from "@rainbow-me/rainbowkit";
 
 const parseIpfsUrl = (ipfsUrl: string) =>
   `https://cloudflare-ipfs.com/ipfs/${ipfsUrl.replace("ipfs://", "")}`;
 
 export default function Mint() {
   const [loading, setLoading] = useState(false);
-  const { connect, connectors } = useConnect();
+  const { openConnectModal } = useConnectModal();
   const account = useAccount();
   const [imageUrl, setImageUrl] = useState("");
   const { search } = useLocation();
@@ -49,8 +50,8 @@ export default function Mint() {
 
   const handleMint = useCallback(async () => {
     setLoading(true);
-    if (!account.address) {
-      connect({ connector: connectors.at(0) });
+    if (!account.address && openConnectModal) {
+      openConnectModal();
     } else {
       const res = await sarauNFT.writeContract!.mint(
         ethers.utils.formatBytes32String("")
@@ -64,7 +65,7 @@ export default function Mint() {
       await sarauNFT.getSarauNFTInfos();
     }
     setLoading(false);
-  }, [sarauNFT, account, connect]);
+  }, [sarauNFT, account, openConnectModal]);
 
   return (
     <Col>
