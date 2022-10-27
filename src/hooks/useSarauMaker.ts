@@ -35,12 +35,12 @@ export const useSarauMaker = () => {
   }, [chainId, provider]);
 
   const getSarauCreationEtherFee = useCallback(async () => {
-    const etherFee =
+    const fee =
       (await readContract?.callStatic.creationEtherFee()) as ethers.BigNumber;
 
-    console.log(etherFee, "usdFee");
+    console.log(fee.toString(), "etherFee");
 
-    setEtherFee(etherFee);
+    setEtherFee(fee);
   }, [readContract]);
 
   useEffect(() => {

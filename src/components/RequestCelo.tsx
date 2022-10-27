@@ -8,6 +8,7 @@ import { useChainId } from "../hooks/useChainId";
 import { useRecaptcha } from "react-hook-recaptcha";
 import axios from "axios";
 import { ethers } from "ethers";
+import cogoToast from "cogo-toast";
 
 const containerId = "recaptcha";
 
@@ -16,6 +17,7 @@ const RequestCelo: React.FC = () => {
   const balance = useBalance({ addressOrName: account.address, watch: true });
   const [loading, setIsLoading] = useState(false);
   const { chainId } = useChainId();
+  const [requested, setRequested] = useState(false);
 
   const successCallback = (response: string) => {
     requestCelo(response);
@@ -51,8 +53,15 @@ const RequestCelo: React.FC = () => {
             }`,
             form
           );
+          setRequested(true);
+          cogoToast.success(
+            "Success, in a few seconds you will have a little cello needed to make the mint in your wallet."
+          );
         } catch (error) {
           console.error(error, "requestCelo");
+          cogoToast.error(
+            "There was an error with your request, try again or if it persists, contact our team."
+          );
         } finally {
           setIsLoading(false);
         }
@@ -68,7 +77,11 @@ const RequestCelo: React.FC = () => {
 
   return (
     <Collapse
-      isOpen={balance.data && balance.data.value.eq(ethers.BigNumber.from(0))}
+      isOpen={
+        !requested &&
+        balance.data &&
+        balance.data.value.eq(ethers.BigNumber.from(0))
+      }
     >
       <Card body className="mb-3">
         <Button

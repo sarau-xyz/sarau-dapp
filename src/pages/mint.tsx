@@ -1,4 +1,4 @@
-import { Card, CardSubtitle, CardTitle, Col, Row } from "reactstrap";
+import { Alert, Card, CardSubtitle, CardTitle, Col, Row } from "reactstrap";
 import { VscDebugBreakpointLog } from "react-icons/vsc";
 import { useLocation } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -16,16 +16,22 @@ import ShimmerMintCard from "../components/ShimmerMintCard";
 import RequestCelo from "../components/RequestCelo";
 import CustomButton from "../components/forms/CustomButton";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
+import cogoToast from "cogo-toast";
+import { AiFillCheckCircle } from "react-icons/ai";
+import { useChainId } from "../hooks/useChainId";
+import { CUSTOM_CHAINS } from "../constants/CUSTOM_CHAINS";
 
 const parseIpfsUrl = (ipfsUrl: string) =>
   `https://cloudflare-ipfs.com/ipfs/${ipfsUrl.replace("ipfs://", "")}`;
 
 export default function Mint() {
+  const chainId = useChainId();
   const [loading, setLoading] = useState(false);
   const { openConnectModal } = useConnectModal();
   const account = useAccount();
   const [imageUrl, setImageUrl] = useState("");
   const { search } = useLocation();
+  const [transactionHash, setTransactionHash] = useState("");
 
   const query = useMemo(() => new URLSearchParams(search), [search]);
 
@@ -56,13 +62,13 @@ export default function Mint() {
       const res = await sarauNFT.writeContract!.mint(
         ethers.utils.formatBytes32String("")
       );
-      console.log(res, "res");
 
-      const tx = await res.wait();
+      setTransactionHash(res.hash);
 
-      console.log(tx, "tx");
+      cogoToast.success("Success!");
 
       await sarauNFT.getSarauNFTInfos();
+      await sarauNFT.getHasNft();
     }
     setLoading(false);
   }, [sarauNFT, account, openConnectModal]);
@@ -120,10 +126,23 @@ export default function Mint() {
 
             <RequestCelo />
 
+            <Alert color="success" isOpen={!!transactionHash}>
+              <AiFillCheckCircle /> NFT minted,{" "}
+              <a
+                href={`https://${
+                  chainId.chainId === CUSTOM_CHAINS.celo.id ? "" : "alfajores."
+                }celoscan.io/tx/${transactionHash}`}
+                target="_blank"
+                rel="nooper"
+              >
+                view on explorer.
+              </a>
+            </Alert>
+
             <CustomButton
               color="primary"
               block
-              disabled={!sarauNFT.isOnMintWindow}
+              disabled={!sarauNFT.isOnMintWindow || sarauNFT.alreadyMinted}
               onClick={handleMint}
               className="glowing"
               loading={loading}
@@ -131,6 +150,8 @@ export default function Mint() {
               {sarauNFT.isOnMintWindow
                 ? !account.address
                   ? "Connect wallet"
+                  : sarauNFT.alreadyMinted
+                  ? "Already Minted"
                   : "Mint now"
                 : sarauNFT.isBeforeEnd
                 ? "Mint will start soon"

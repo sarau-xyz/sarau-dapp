@@ -57,9 +57,11 @@ export const useCreateSarauModal = () => {
 
   const createTx = useCallback(
     async (data: CreateSarauForm, image: string) => {
-      const fee = await sarauMaker.writeContract!.creationEtherFee();
-
-      console.log("fee", fee);
+      console.log(
+        "fee",
+        ethers.utils.formatUnits(sarauMaker.etherFee, 8),
+        sarauMaker.etherFee.toString()
+      );
 
       const tx = await sarauMaker.writeContract!.createSarau(
         data.maxMint,
@@ -70,7 +72,7 @@ export const useCreateSarauModal = () => {
         data.symbol,
         image,
         {
-          value: fee,
+          value: sarauMaker.etherFee.toString(),
         }
       );
 

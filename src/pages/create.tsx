@@ -1,6 +1,7 @@
 import { FormHandles } from "@unform/core";
 import { Form } from "@unform/web";
 import cogoToast from "cogo-toast";
+import { ethers } from "ethers";
 import { useEffect, useRef, useState } from "react";
 import {
   FormGroup,
@@ -195,7 +196,11 @@ export default function Create() {
             type="submit"
             block
           >
-            Create ({sarauMaker.etherFee.toNumber()} CELO)
+            Create (
+            {ethers.utils
+              .formatUnits(sarauMaker.etherFee.toString(), 18)
+              .toString()}{" "}
+            CELO)
           </CustomButton>
           {balance.data && balance.data.value.lt(sarauMaker.etherFee) && (
             <small>

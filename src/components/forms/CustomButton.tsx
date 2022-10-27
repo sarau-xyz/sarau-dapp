@@ -7,10 +7,11 @@ type ButtonProps = bButtonProps & { loading?: boolean };
 const CustomButton: React.FC<ButtonProps> = ({
   loading,
   children,
+  disabled,
   ...rest
 }) => {
   return (
-    <Button className="btn" disabled={loading} {...rest}>
+    <Button className="btn" disabled={disabled || loading} {...rest}>
       {loading && (
         <>
           <AiOutlineLoading3Quarters className="spin" />{" "}

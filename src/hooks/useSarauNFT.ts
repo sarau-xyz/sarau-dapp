@@ -1,6 +1,6 @@
 import { ethers } from "ethers";
 import { useState, useMemo, useCallback, useEffect } from "react";
-import { useProvider, useSigner } from "wagmi";
+import { useAccount, useProvider, useSigner } from "wagmi";
 import { useSarauMaker } from "./useSarauMaker";
 import abi from "../static/abis/SarauNFT.json";
 import { isAfter, isBefore, fromUnixTime } from "date-fns";
@@ -9,6 +9,7 @@ export const useSarauNFT = (sarauId: string | null) => {
   const sarauMaker = useSarauMaker();
   const provider = useProvider();
   const { data: signer } = useSigner();
+  const account = useAccount();
   const [nftAddress, setNftAddress] = useState<string>();
   const [nftData, setNftData] = useState<{
     name: string;
@@ -21,6 +22,7 @@ export const useSarauNFT = (sarauId: string | null) => {
     tokenURI: string;
   }>();
   const [dateNow, setDateNow] = useState(new Date());
+  const [alreadyMinted, setAlreadyMinted] = useState(false);
 
   const readContract = useMemo(() => {
     if (sarauId && nftAddress) {
@@ -105,6 +107,20 @@ export const useSarauNFT = (sarauId: string | null) => {
     return () => clearInterval(tickInterval);
   }, []);
 
+  const getHasNft = useCallback(async () => {
+    if (readContract && account.address) {
+      const has = await readContract?.callStatic.balanceOf(account.address);
+
+      setAlreadyMinted(
+        ethers.BigNumber.from(has).eq(ethers.BigNumber.from("1"))
+      );
+    }
+  }, [readContract, account.address]);
+
+  useEffect(() => {
+    getHasNft();
+  }, [getHasNft, account.address]);
+
   return {
     nftAddress,
     nftData,
@@ -115,5 +131,7 @@ export const useSarauNFT = (sarauId: string | null) => {
     isOnMintWindow,
     dateNow,
     getSarauNFTInfos,
+    getHasNft,
+    alreadyMinted,
   };
 };
