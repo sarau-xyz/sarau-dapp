@@ -133,7 +133,7 @@ export default function Mint() {
                   chainId.chainId === CUSTOM_CHAINS.celo.id ? "" : "alfajores."
                 }celoscan.io/tx/${transactionHash}`}
                 target="_blank"
-                rel="nooper"
+                rel="noreferrer"
               >
                 view on explorer.
               </a>
