@@ -5,7 +5,7 @@ import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfil
 // yarn add --dev @esbuild-plugins/node-modules-polyfill
 import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
 // You don't need to add this to deps, it's included by @esbuild-plugins/node-modules-polyfill
-import rollupNodePolyFill from 'rollup-plugin-polyfill-node';
+import rollupNodePolyFill from "rollup-plugin-polyfill-node";
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -22,14 +22,13 @@ export default defineConfig({
       // path: "rollup-plugin-node-polyfills/polyfills/path",
       // querystring: "rollup-plugin-node-polyfills/polyfills/qs",
       // punycode: "rollup-plugin-node-polyfills/polyfills/punycode",
-      crypto: "rollup-plugin-node-polyfills/polyfills/crypto",
+      crypto: "crypto-browserify",
       stream: "rollup-plugin-node-polyfills/polyfills/stream",
       assert: "rollup-plugin-node-polyfills/polyfills/assert",
       http: "rollup-plugin-node-polyfills/polyfills/http",
       https: "rollup-plugin-node-polyfills/polyfills/http",
       os: "rollup-plugin-node-polyfills/polyfills/os",
       url: "rollup-plugin-node-polyfills/polyfills/url",
-      
     },
   },
   optimizeDeps: {
