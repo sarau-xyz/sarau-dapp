@@ -8,6 +8,7 @@ import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfil
 import rollupNodePolyFill from "rollup-plugin-polyfill-node";
 
 // https://vitejs.dev/config/
+// https://medium.com/@ftaioli/using-node-js-builtin-modules-with-vite-6194737c2cd2
 export default defineConfig({
   plugins: [react()],
   resolve: {
