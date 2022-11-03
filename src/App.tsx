@@ -24,6 +24,7 @@ import {
 import Valora from "./wallets/Valora";
 import CeloWallet from "./wallets/CeloWallet";
 import CeloDance from "./wallets/CeloDance";
+import { SarauMakerProvider } from "./providers/SarauMakerProvider";
 
 const { chains, provider } = configureChains(Object.values(CUSTOM_CHAINS), [
   publicProvider(),
@@ -62,16 +63,18 @@ function App() {
     <ChainIdProvider>
       <WagmiConfig client={client}>
         <RainbowKitProvider coolMode chains={chains}>
-          <Router>
-            <Header />
-            <Container>
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/create" element={<Create />} />
-                <Route path="/mint" element={<Mint />} />
-              </Routes>
-            </Container>
-          </Router>
+          <SarauMakerProvider>
+            <Router>
+              <Header />
+              <Container>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/create" element={<Create />} />
+                  <Route path="/mint" element={<Mint />} />
+                </Routes>
+              </Container>
+            </Router>
+          </SarauMakerProvider>
         </RainbowKitProvider>
       </WagmiConfig>
     </ChainIdProvider>

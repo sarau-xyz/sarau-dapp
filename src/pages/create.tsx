@@ -205,7 +205,7 @@ export default function Create() {
           {balance.data && balance.data.value.lt(sarauMaker.etherFee) && (
             <small>
               You don't have enough balance to create a Sarau, you need at least{" "}
-              {sarauMaker.etherFee.toNumber()} plus network fees.
+              {sarauMaker.etherFee.toString()} plus network fees.
             </small>
           )}
         </Form>

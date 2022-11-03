@@ -103,8 +103,8 @@ export default function Mint() {
             <p>
               Minted:{" "}
               <b>
-                {sarauNFT.nftData.totalSupply.toNumber()}/
-                {sarauNFT.nftData.maxMint.toNumber()}
+                {sarauNFT.nftData.totalSupply.toString()}/
+                {sarauNFT.nftData.maxMint.toString()}
               </b>
             </p>
             <p>
