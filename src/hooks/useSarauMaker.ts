@@ -9,6 +9,7 @@ type SarauMakerContextProps = {
   writeContract: ethers.Contract | null;
   getSarauCreationEtherFee: () => void;
   etherFee: ethers.BigNumber;
+  usdFee: ethers.BigNumber;
   isAdmin: boolean;
   updateCeloPrice: () => void;
 };

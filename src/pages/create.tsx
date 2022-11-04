@@ -81,6 +81,12 @@ export default function Create() {
     }
   };
 
+  const displayEtherFee= ethers.utils
+  .formatUnits(sarauMaker.etherFee.toString(), 18);
+
+  const displayUsdFee= ethers.utils
+  .formatUnits(sarauMaker.usdFee.toString(), 18);
+
   return (
     <>
       <CreateSarauModal
@@ -93,7 +99,7 @@ export default function Create() {
         style={{
           maxWidth: 500,
         }}
-        className="mx-auto border-0 shadow"
+        className="mx-auto border-0 shadow mb-3"
         body
       >
         <Form ref={formRef} onSubmit={handleFormSubmit}>
@@ -197,15 +203,14 @@ export default function Create() {
             block
           >
             Create (
-            {ethers.utils
-              .formatUnits(sarauMaker.etherFee.toString(), 18)
-              .toString()}{" "}
+            {displayEtherFee}{" "}
             CELO)
           </CustomButton>
+          <small>{displayEtherFee} CELO is currently equivalent to approximately US${displayUsdFee}.</small>
           {balance.data && balance.data.value.lt(sarauMaker.etherFee) && (
             <small>
               You don't have enough balance to create a Sarau, you need at least{" "}
-              {sarauMaker.etherFee.toString()} plus network fees.
+              {displayEtherFee} plus network fees.
             </small>
           )}
         </Form>

@@ -1,6 +1,6 @@
 import React from "react";
 import { Card } from "reactstrap";
-import { Shimmer } from "react-shimmer";
+import Skeleton from "react-loading-skeleton";
 
 const ShimmerMintCard: React.FC = () => {
   const Spacing = (height: number) => <div style={{ height }} />;
@@ -13,19 +13,23 @@ const ShimmerMintCard: React.FC = () => {
       className="mx-auto border-0 shadow"
       body
     >
-      <Shimmer height={24} width={300} />
+      <Skeleton height={24} width={300} />
       {Spacing(10)}
-      <Shimmer height={20} width={100} />
+      <Skeleton height={20} width={100} />
       {Spacing(10)}
-      <Shimmer height={200} width={200} className="mx-auto" />
+      <div className="mx-auto">
+        <Skeleton height={200} width={200} />
+      </div>
       {Spacing(10)}
-      <Shimmer height={20} width={100} />
+      <Skeleton height={20} width={100} />
       {Spacing(10)}
-      <Shimmer height={20} width={300} />
+      <Skeleton height={20} width={300} />
       {Spacing(10)}
-      <Shimmer height={38} width={450}  />
+      <Skeleton height={38} width={450} />
       {Spacing(10)}
-      <Shimmer height={20} width={300} className="mx-auto" />
+      <div className="mx-auto">
+        <Skeleton height={20} width={300} />
+      </div>
     </Card>
   );
 };

@@ -26,7 +26,7 @@ const RequestCelo: React.FC = () => {
   const { recaptchaLoaded, execute, reset } = useRecaptcha({
     containerId,
     successCallback,
-    sitekey: process.env.REACT_APP_CAPTCHA_SITE_KEY,
+    sitekey: import.meta.env.VITE_CAPTCHA_SITE_KEY,
     size: "invisible",
     errorCallback: (e: any) => console.error(e),
   });

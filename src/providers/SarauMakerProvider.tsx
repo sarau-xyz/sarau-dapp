@@ -15,6 +15,7 @@ export const SarauMakerProvider: React.FC<{ children: React.ReactNode }> = ({
   const provider = useProvider();
   const { chainId } = useChainId();
   const [etherFee, setEtherFee] = useState(ethers.BigNumber.from("0"));
+  const [usdFee, setUsdFee] = useState(ethers.BigNumber.from("0"));
   const [isAdmin, setIsAdmin] = useState(false);
 
   const writeContract = useMemo(() => {
@@ -40,10 +41,11 @@ export const SarauMakerProvider: React.FC<{ children: React.ReactNode }> = ({
   const getSarauCreationEtherFee = useCallback(async () => {
     const fee =
       (await readContract?.callStatic.creationEtherFee()) as ethers.BigNumber;
-
-    console.log(fee.toString(), "etherFee");
+    const usdFee =
+      (await readContract?.callStatic.creationUSDFee()) as ethers.BigNumber;
 
     setEtherFee(fee);
+    setUsdFee(usdFee);
   }, [readContract]);
 
   useEffect(() => {
@@ -78,6 +80,7 @@ export const SarauMakerProvider: React.FC<{ children: React.ReactNode }> = ({
         writeContract,
         getSarauCreationEtherFee,
         etherFee,
+        usdFee,
         isAdmin,
         updateCeloPrice,
       }}
