@@ -37,14 +37,14 @@ const connectors = connectorsForWallets([
       Valora({ chains }),
       CeloWallet({ chains }),
       CeloDance({ chains }),
-      metaMaskWallet({ chains }),
-      omniWallet({ chains }),
-      walletConnectWallet({ chains }),
     ],
   },
   {
     groupName: "Also works",
     wallets: [
+      metaMaskWallet({ chains }),
+      omniWallet({ chains }),
+      walletConnectWallet({ chains }),
       trustWallet({ chains }),
       coinbaseWallet({ appName: "SarauXYZ", chains }),
       braveWallet({ chains }),

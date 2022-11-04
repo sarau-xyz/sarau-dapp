@@ -1,8 +1,21 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { Button } from "reactstrap";
+import TextTransition, { presets } from "react-text-transition";
+
+const TEXTS = ["Souvenirs", "Mementos", "Memories", "Collectibles", "Art"];
 
 const Home: React.FC = () => {
+  const [index, setIndex] = React.useState(0);
+
+  React.useEffect(() => {
+    const intervalId = setInterval(
+      () => setIndex((index) => index + 1),
+      3000 // every 3 seconds
+    );
+    return () => clearTimeout(intervalId);
+  }, []);
+
   return (
     <div className="bd-masthead mb-3" id="content">
       <div className="container-xxl bd-gutter">
@@ -14,7 +27,12 @@ const Home: React.FC = () => {
             alt="Bootstrap"
             className="d-block mx-auto mb-3"
           />
-          <h1 className="mb-3 fw-semibold">Create digital souvenirs</h1>
+          <h1 className="mb-3 fw-semibold">
+            Create Digital{" "}
+            <TextTransition springConfig={presets.wobbly} inline>
+              {TEXTS[index % TEXTS.length]}
+            </TextTransition>
+          </h1>
           <p className="lead mb-4">
             Sarau is a dapp that enables users to easily collect NFTs that
             represent moments of real life.
