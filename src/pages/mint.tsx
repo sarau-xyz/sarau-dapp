@@ -1,4 +1,13 @@
-import { Alert, Card, CardSubtitle, CardTitle, Col, Row } from "reactstrap";
+import {
+  Alert,
+  Card,
+  CardSubtitle,
+  CardTitle,
+  Col,
+  Modal,
+  ModalHeader,
+  Row,
+} from "reactstrap";
 import { VscDebugBreakpointLog } from "react-icons/vsc";
 import { useLocation } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
@@ -17,9 +26,14 @@ import RequestCelo from "../components/RequestCelo";
 import CustomButton from "../components/forms/CustomButton";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import cogoToast from "cogo-toast";
-import { AiFillCheckCircle, AiOutlineShareAlt } from "react-icons/ai";
+import {
+  AiFillCheckCircle,
+  AiOutlineQrcode,
+  AiOutlineShareAlt,
+} from "react-icons/ai";
 import { useChainId } from "../hooks/useChainId";
 import { CUSTOM_CHAINS } from "../constants/CUSTOM_CHAINS";
+import { QRCode } from "react-qrcode-logo";
 
 const parseIpfsUrl = (ipfsUrl: string) =>
   `https://cloudflare-ipfs.com/ipfs/${ipfsUrl.replace("ipfs://", "")}`;
@@ -32,6 +46,9 @@ export default function Mint() {
   const [imageUrl, setImageUrl] = useState("");
   const { search } = useLocation();
   const [transactionHash, setTransactionHash] = useState("");
+  const [showQrCode, setShowQrCode] = useState(false);
+
+  const toggleQrCode = () => setShowQrCode((oldState) => !oldState);
 
   const query = useMemo(() => new URLSearchParams(search), [search]);
 
@@ -73,11 +90,13 @@ export default function Mint() {
     setLoading(false);
   }, [sarauNFT, account, openConnectModal]);
 
+  const currentUrl = useMemo(() => window.location.href, [window]);
+
   const share = async () => {
     try {
       await navigator.share({
         title: sarauNFT.nftData?.name,
-        url: window.location.href,
+        url: currentUrl,
         text: `Free mint ${sarauNFT.nftData?.name} on Sarau.XYZ`,
       });
     } catch (_) {
@@ -90,6 +109,21 @@ export default function Mint() {
 
   return (
     <div className="mb-3">
+      <Modal isOpen={showQrCode} toggle={toggleQrCode}>
+        <ModalHeader toggle={toggleQrCode}>
+          {sarauNFT.nftData?.name}
+        </ModalHeader>
+        <div className="mx-auto">
+          <QRCode
+            value={currentUrl}
+            size={300}
+            logoImage={
+              "https://avatars.githubusercontent.com/u/114229151?s=200&v=4"
+            }
+            eyeRadius={5}
+          />
+        </div>
+      </Modal>
       {sarauNFT.nftData ? (
         <Card
           style={{
@@ -103,10 +137,23 @@ export default function Mint() {
               position: "absolute",
               right: 20,
               top: 20,
+              cursor: "pointer",
             }}
             onClick={share}
           >
             <AiOutlineShareAlt size={20} />
+          </div>
+
+          <div
+            style={{
+              position: "absolute",
+              right: 45,
+              top: 20,
+              cursor: "pointer",
+            }}
+            onClick={toggleQrCode}
+          >
+            <AiOutlineQrcode size={20} />
           </div>
 
           <CardTitle tag="h5">{sarauNFT.nftData?.name}</CardTitle>

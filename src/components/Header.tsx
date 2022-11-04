@@ -21,7 +21,7 @@ function Header() {
   return (
     <Navbar expand="md">
       <NavbarBrand tag={Link} to="/">
-        Sarau.xyz
+        Sarau.XYZ
       </NavbarBrand>
       <NavbarToggler onClick={toggle} />
       <Collapse isOpen={isOpen} navbar>
