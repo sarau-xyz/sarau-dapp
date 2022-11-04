@@ -17,7 +17,7 @@ import RequestCelo from "../components/RequestCelo";
 import CustomButton from "../components/forms/CustomButton";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import cogoToast from "cogo-toast";
-import { AiFillCheckCircle } from "react-icons/ai";
+import { AiFillCheckCircle, AiOutlineShareAlt } from "react-icons/ai";
 import { useChainId } from "../hooks/useChainId";
 import { CUSTOM_CHAINS } from "../constants/CUSTOM_CHAINS";
 
@@ -73,111 +73,131 @@ export default function Mint() {
     setLoading(false);
   }, [sarauNFT, account, openConnectModal]);
 
+  const share = async () => {
+    try {
+      await navigator.share({
+        title: sarauNFT.nftData?.name,
+        url: window.location.href,
+        text: `Free mint ${sarauNFT.nftData?.name} on Sarau.XYZ`,
+      });
+    } catch (_) {
+      navigator.clipboard.writeText(
+        `Free mint ${sarauNFT.nftData?.name} on Sarau.XYZ: ${window.location.href}`
+      );
+      cogoToast.success("Link copied to clipboard.");
+    }
+  };
+
   return (
-    <Col>
-      <Row>
-        {sarauNFT.nftData ? (
-          <Card
+    <div className="mb-3">
+      {sarauNFT.nftData ? (
+        <Card
+          style={{
+            maxWidth: 500,
+          }}
+          className="mx-auto border-0 shadow"
+          body
+        >
+          <div
             style={{
-              maxWidth: 500,
+              position: "absolute",
+              right: 20,
+              top: 20,
             }}
-            className="mx-auto border-0 shadow"
-            body
+            onClick={share}
           >
-            <CardTitle tag="h5">{sarauNFT.nftData?.name}</CardTitle>
-            <CardSubtitle className="mb-2 text-muted" tag="h6">
-              {sarauNFT.nftData?.symbol} <VscDebugBreakpointLog />{" "}
-              <a
-                href={sarauNFT.nftData?.homepage}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {sarauNFT.nftData?.homepage}
-              </a>
-            </CardSubtitle>
-            <img
-              alt="Sample"
-              src={imageUrl}
-              className="my-3 img-fluid rounded"
-            />
-            <p>
-              Minted:{" "}
-              <b>
-                {sarauNFT.nftData.totalSupply.toString()}/
-                {sarauNFT.nftData.maxMint.toString()}
-              </b>
-            </p>
-            <p>
-              Mint period:{" "}
-              <b>
-                {format(
-                  fromUnixTime(sarauNFT.nftData?.startDate.toNumber()),
-                  "dd/MM/yyyy HH:mm"
-                )}
-              </b>
-              {" - "}
-              <b>
-                {format(
-                  fromUnixTime(sarauNFT.nftData?.endDate.toNumber()),
-                  "dd/MM/yyyy HH:mm"
-                )}
-              </b>
-            </p>
+            <AiOutlineShareAlt size={20} />
+          </div>
 
-            <RequestCelo />
-
-            <Alert color="success" isOpen={!!transactionHash}>
-              <AiFillCheckCircle /> NFT minted,{" "}
-              <a
-                href={`https://${
-                  chainId.chainId === CUSTOM_CHAINS.celo.id ? "" : "alfajores."
-                }celoscan.io/tx/${transactionHash}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                view on explorer.
-              </a>
-            </Alert>
-
-            <CustomButton
-              color="primary"
-              block
-              disabled={!sarauNFT.isOnMintWindow || sarauNFT.alreadyMinted}
-              onClick={handleMint}
-              className="glowing"
-              loading={loading}
+          <CardTitle tag="h5">{sarauNFT.nftData?.name}</CardTitle>
+          <CardSubtitle className="mb-2 text-muted" tag="h6">
+            {sarauNFT.nftData?.symbol} <VscDebugBreakpointLog />{" "}
+            <a
+              href={sarauNFT.nftData?.homepage}
+              target="_blank"
+              rel="noreferrer"
             >
-              {sarauNFT.isOnMintWindow
-                ? !account.address
-                  ? "Connect wallet"
-                  : sarauNFT.alreadyMinted
-                  ? "Already Minted"
-                  : "Mint now"
-                : sarauNFT.isBeforeEnd
-                ? "Mint will start soon"
-                : "Mint ended"}
-            </CustomButton>
-            {sarauNFT.isOnMintWindow && (
-              <p className="text-center">
-                <small>
-                  Ending in{" "}
-                  {formatDuration(
-                    intervalToDuration({
-                      start: sarauNFT.dateNow,
-                      end: fromUnixTime(sarauNFT.nftData.endDate.toNumber()),
-                    }),
-                    {
-                      delimiter: ", ",
-                    }
-                  )}
-                </small>
-              </p>
-            )}
-          </Card>
-        ) : (
-          <ShimmerMintCard />
-        )}
-      </Row>
-    </Col>
+              {sarauNFT.nftData?.homepage}
+            </a>
+          </CardSubtitle>
+          <img alt="Sample" src={imageUrl} className="my-3 img-fluid rounded" />
+          <p>
+            Minted:{" "}
+            <b>
+              {sarauNFT.nftData.totalSupply.toString()}/
+              {sarauNFT.nftData.maxMint.toString()}
+            </b>
+          </p>
+          <p>
+            Mint period:{" "}
+            <b>
+              {format(
+                fromUnixTime(sarauNFT.nftData?.startDate.toNumber()),
+                "dd/MM/yyyy HH:mm"
+              )}
+            </b>
+            {" - "}
+            <b>
+              {format(
+                fromUnixTime(sarauNFT.nftData?.endDate.toNumber()),
+                "dd/MM/yyyy HH:mm"
+              )}
+            </b>
+          </p>
+
+          <RequestCelo />
+
+          <Alert color="success" isOpen={!!transactionHash}>
+            <AiFillCheckCircle /> NFT minted,{" "}
+            <a
+              href={`https://${
+                chainId.chainId === CUSTOM_CHAINS.celo.id ? "" : "alfajores."
+              }celoscan.io/tx/${transactionHash}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              view on explorer.
+            </a>
+          </Alert>
+
+          <CustomButton
+            color="primary"
+            block
+            disabled={!sarauNFT.isOnMintWindow || sarauNFT.alreadyMinted}
+            onClick={handleMint}
+            className="glowing"
+            loading={loading}
+          >
+            {sarauNFT.isOnMintWindow
+              ? !account.address
+                ? "Connect wallet"
+                : sarauNFT.alreadyMinted
+                ? "Already Minted"
+                : "Mint now"
+              : sarauNFT.isBeforeEnd
+              ? "Mint will start soon"
+              : "Mint ended"}
+          </CustomButton>
+          {sarauNFT.isOnMintWindow && (
+            <p className="text-center">
+              <small>
+                Ending in{" "}
+                {formatDuration(
+                  intervalToDuration({
+                    start: sarauNFT.dateNow,
+                    end: fromUnixTime(sarauNFT.nftData.endDate.toNumber()),
+                  }),
+                  {
+                    delimiter: ", ",
+                  }
+                )}
+              </small>
+            </p>
+          )}
+        </Card>
+      ) : (
+        <ShimmerMintCard />
+      )}
+    </div>
   );
 }
