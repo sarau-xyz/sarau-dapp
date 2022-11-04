@@ -3,6 +3,10 @@
   "version": "1.0.0",
   "license": "MIT",
   "homepage": "https://sarau.xyz",
+  "repository": {
+    "url": "https://github.com/sarau-xyz/sarau-dapp.git",
+    "type": "git"
+  },
   "private": false,
   "dependencies": {
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
