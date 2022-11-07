@@ -31,6 +31,7 @@ export default function Create() {
   const formRef = useRef<FormHandles>(null);
   const [file, setFile] = useState<File>();
   const [fileUrl, setFileUrl] = useState<string>();
+  const [confirm, setConfirm] = useState(false);
 
   useEffect(() => {
     if (file) {
@@ -81,11 +82,21 @@ export default function Create() {
     }
   };
 
-  const displayEtherFee= ethers.utils
-  .formatUnits(sarauMaker.etherFee.toString(), 18);
+  const onCheckChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setConfirm(e.target.checked);
+  };
 
-  const displayUsdFee= ethers.utils
-  .formatUnits(sarauMaker.usdFee.toString(), 18);
+  const displayEtherFee = ethers.utils.formatUnits(
+    sarauMaker.etherFee.toString(),
+    18
+  );
+
+  const displayUsdFee = ethers.utils.formatUnits(
+    sarauMaker.usdFee.toString(),
+    18
+  );
+
+  const hasBalance = balance.data && balance.data.value.gt(sarauMaker.etherFee);
 
   return (
     <>
@@ -194,20 +205,37 @@ export default function Create() {
               )}
             </FormGroup>
           </Card>
-
+          <FormGroup check inline className="mt-3">
+            <Input
+              type="checkbox"
+              id="confirm"
+              checked={confirm}
+              onChange={(e) => onCheckChange(e)}
+            />
+            <Label check for="confirm">
+              I understand that after confirming the transaction it cannot be
+              reversed.
+            </Label>
+          </FormGroup>
           <CustomButton
             loading={loading}
             color="primary"
-            className="mt-3"
+            // className="mt-3"
             type="submit"
             block
+            disabled={!hasBalance && !confirm}
           >
-            Create (
-            {displayEtherFee}{" "}
-            CELO)
+            Create ({displayEtherFee} CELO)
           </CustomButton>
-          <small>{displayEtherFee} CELO is currently equivalent to approximately US${displayUsdFee}.</small>
-          {balance.data && balance.data.value.lt(sarauMaker.etherFee) && (
+          {hasBalance && (
+            <small>
+              {displayEtherFee} CELO is currently equivalent to approximately
+              US$
+              {displayUsdFee}.
+            </small>
+          )}
+
+          {!hasBalance && (
             <small>
               You don't have enough balance to create a Sarau, you need at least{" "}
               {displayEtherFee} plus network fees.
