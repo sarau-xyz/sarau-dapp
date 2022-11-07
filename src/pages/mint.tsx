@@ -34,6 +34,7 @@ import {
 import { useChainId } from "../hooks/useChainId";
 import { CUSTOM_CHAINS } from "../constants/CUSTOM_CHAINS";
 import { QRCode } from "react-qrcode-logo";
+import Skeleton from "react-loading-skeleton";
 
 const parseIpfsUrl = (ipfsUrl: string) =>
   `https://cloudflare-ipfs.com/ipfs/${ipfsUrl.replace("ipfs://", "")}`;
@@ -47,6 +48,7 @@ export default function Mint() {
   const { search } = useLocation();
   const [transactionHash, setTransactionHash] = useState("");
   const [showQrCode, setShowQrCode] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const toggleQrCode = () => setShowQrCode((oldState) => !oldState);
 
@@ -167,7 +169,21 @@ export default function Mint() {
               {sarauNFT.nftData?.homepage}
             </a>
           </CardSubtitle>
-          <img alt="Sample" src={imageUrl} className="my-3 img-fluid rounded" />
+          <div className="mx-auto">
+            {!imageLoaded && <Skeleton height={200} width={200} />}
+            <img
+              alt={sarauNFT.nftData?.name}
+              src={imageUrl}
+              onLoad={() => {
+                setImageLoaded(true);
+              }}
+              className={`my-3 img-fluid rounded ${
+                imageLoaded ? "d-block" : "d-none"
+              }`}
+              height={200}
+              width={200}
+            />
+          </div>
           <p>
             Minted:{" "}
             <b>
