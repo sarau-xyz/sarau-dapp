@@ -4,6 +4,11 @@ import { useAccount, useProvider, useSigner } from "wagmi";
 import { useSarauMaker } from "./useSarauMaker";
 import abi from "../static/abis/SarauNFT.json";
 import { isAfter, isBefore, fromUnixTime } from "date-fns";
+import {
+  Multicall,
+  ContractCallResults,
+  ContractCallContext,
+} from "ethereum-multicall";
 
 export const useSarauNFT = (sarauId: string | null) => {
   const sarauMaker = useSarauMaker();
@@ -23,6 +28,16 @@ export const useSarauNFT = (sarauId: string | null) => {
   }>();
   const [dateNow, setDateNow] = useState(new Date());
   const [alreadyMinted, setAlreadyMinted] = useState(false);
+  const multicall = useMemo(
+    () =>
+      new Multicall({
+        ethersProvider: provider,
+        tryAggregate: true,
+        multicallCustomContractAddress:
+          "0x75f59534dd892c1f8a7b172d639fa854d529ada3", // multicall CELO and alfajores addr
+      }),
+    [provider]
+  );
 
   const readContract = useMemo(() => {
     if (sarauId && nftAddress) {
