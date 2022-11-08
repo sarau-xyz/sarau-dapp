@@ -13,22 +13,24 @@ const ShimmerMintCard: React.FC = () => {
       className="mx-auto border-0 shadow"
       body
     >
-      <Skeleton height={24} width={300} />
+      <Skeleton height={24} width={"45%"} />
       {Spacing(10)}
-      <Skeleton height={20} width={100} />
+      <Skeleton height={20} width={"20%"} />
       {Spacing(10)}
       <div className="mx-auto">
         <Skeleton height={200} width={200} />
       </div>
       {Spacing(10)}
-      <Skeleton height={20} width={100} />
+      <Skeleton height={20} width={"20%"} />
       {Spacing(10)}
-      <Skeleton height={20} width={300} />
+      <Skeleton height={20} width={"70%"} />
       {Spacing(10)}
-      <Skeleton height={38} width={450} />
+      <Skeleton height={38} width={"95%"} />
       {Spacing(10)}
-      <div className="mx-auto">
-        <Skeleton height={20} width={300} />
+      <div className="mx-auto" style={{
+        width: "80%"
+      }} >
+        <Skeleton height={20} />
       </div>
     </Card>
   );

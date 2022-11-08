@@ -20,6 +20,7 @@
     "bootstrap": "^5.2.1",
     "cogo-toast": "^4.2.3",
     "date-fns": "^2.29.3",
+    "ethereum-multicall": "^2.15.0",
     "ethers": "^5.7.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
