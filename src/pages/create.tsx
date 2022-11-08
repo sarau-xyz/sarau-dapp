@@ -223,7 +223,7 @@ export default function Create() {
             // className="mt-3"
             type="submit"
             block
-            disabled={!hasBalance && !confirm}
+            disabled={!hasBalance || !confirm}
           >
             Create ({displayEtherFee} CELO)
           </CustomButton>
