@@ -7,7 +7,6 @@ import {
 type SarauMakerContextProps = {
   readContract: ethers.Contract | null;
   writeContract: ethers.Contract | null;
-  getSarauCreationEtherFee: () => void;
   etherFee: ethers.BigNumber;
   usdFee: ethers.BigNumber;
   isAdmin: boolean;

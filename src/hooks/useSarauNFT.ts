@@ -10,31 +10,33 @@ import {
   ContractCallContext,
 } from "ethereum-multicall";
 
+interface INFTData {
+  name: string;
+  symbol: string;
+  maxMint: ethers.BigNumber;
+  totalSupply: ethers.BigNumber;
+  startDate: ethers.BigNumber;
+  endDate: ethers.BigNumber;
+  homepage: string;
+  tokenURI: string;
+}
+
 export const useSarauNFT = (sarauId: string | null) => {
   const sarauMaker = useSarauMaker();
   const provider = useProvider();
   const { data: signer } = useSigner();
   const account = useAccount();
   const [nftAddress, setNftAddress] = useState<string>();
-  const [nftData, setNftData] = useState<{
-    name: string;
-    symbol: string;
-    maxMint: ethers.BigNumber;
-    totalSupply: ethers.BigNumber;
-    startDate: ethers.BigNumber;
-    endDate: ethers.BigNumber;
-    homepage: string;
-    tokenURI: string;
-  }>();
+  const [nftData, setNftData] = useState<INFTData>();
   const [dateNow, setDateNow] = useState(new Date());
   const [alreadyMinted, setAlreadyMinted] = useState(false);
   const multicall = useMemo(
     () =>
       new Multicall({
         ethersProvider: provider,
-        tryAggregate: true,
+        tryAggregate: false,
         multicallCustomContractAddress:
-          "0x75f59534dd892c1f8a7b172d639fa854d529ada3", // multicall CELO and alfajores addr
+          "0x75F59534dd892c1f8a7B172D639FA854D529ada3", // multicall CELO and alfajores addr
       }),
     [provider]
   );
@@ -64,42 +66,47 @@ export const useSarauNFT = (sarauId: string | null) => {
     if (readContract) {
       const contractCallContext: ContractCallContext[] = [
         {
-          reference: "SarauNFT",
+          reference: "nft",
           contractAddress: nftAddress!,
           abi: abi.abi,
           calls: [
-            { reference: "name", methodName: "name", methodParameters: [] },
-            // { reference: "symbol", methodName: "symbol", methodParameters: [] },
-            // {
-            //   reference: "maxMint",
-            //   methodName: "maxMint",
-            //   methodParameters: [],
-            // },
-            // {
-            //   reference: "totalSupply",
-            //   methodName: "totalSupply",
-            //   methodParameters: [],
-            // },
-            // {
-            //   reference: "startDate",
-            //   methodName: "startDate",
-            //   methodParameters: [],
-            // },
-            // {
-            //   reference: "endDate",
-            //   methodName: "endDate",
-            //   methodParameters: [],
-            // },
-            // {
-            //   reference: "homepage",
-            //   methodName: "homepage",
-            //   methodParameters: [],
-            // },
-            // {
-            //   reference: "tokenURI",
-            //   methodName: "tokenURI",
-            //   methodParameters: [],
-            // },
+            { reference: "name", methodName: "name()", methodParameters: [] },
+
+            {
+              reference: "symbol",
+              methodName: "symbol()",
+              methodParameters: [],
+            },
+            {
+              reference: "maxMint",
+              methodName: "maxMint()",
+              methodParameters: [],
+            },
+            {
+              reference: "totalSupply",
+              methodName: "totalSupply()",
+              methodParameters: [],
+            },
+            {
+              reference: "startDate",
+              methodName: "startDate()",
+              methodParameters: [],
+            },
+            {
+              reference: "endDate",
+              methodName: "endDate()",
+              methodParameters: [],
+            },
+            {
+              reference: "homepage",
+              methodName: "homepage()",
+              methodParameters: [],
+            },
+            {
+              reference: "tokenURI",
+              methodName: "tokenURI(uint256)",
+              methodParameters: [1],
+            },
           ],
         },
       ];
@@ -107,28 +114,17 @@ export const useSarauNFT = (sarauId: string | null) => {
       const results: ContractCallResults = await multicall.call(
         contractCallContext
       );
-      console.log(results);
-      console.log(results.results);
 
-      const name = await readContract.callStatic.name();
-      const symbol = await readContract.callStatic.symbol();
-      const maxMint = await readContract.callStatic.maxMint();
-      const totalSupply = await readContract.callStatic.totalSupply();
-      const startDate = await readContract.callStatic.startDate();
-      const endDate = await readContract.callStatic.endDate();
-      const homepage = await readContract.callStatic.homepage();
-      const tokenURI = await readContract.callStatic.tokenURI(1);
+      const data = {} as INFTData;
 
-      setNftData({
-        name,
-        symbol,
-        maxMint,
-        totalSupply,
-        startDate,
-        endDate,
-        homepage,
-        tokenURI,
+      results.results.nft.callsReturnContext.forEach((res) => {
+        data[res.reference as keyof INFTData] =
+          res.returnValues[0].type === "BigNumber"
+            ? ethers.BigNumber.from(res.returnValues[0])
+            : res.returnValues[0];
       });
+
+      setNftData(data);
     }
   }, [readContract]);
 

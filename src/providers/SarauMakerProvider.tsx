@@ -78,7 +78,6 @@ export const SarauMakerProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         readContract,
         writeContract,
-        getSarauCreationEtherFee,
         etherFee,
         usdFee,
         isAdmin,
