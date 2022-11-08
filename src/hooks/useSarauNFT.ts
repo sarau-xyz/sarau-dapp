@@ -69,37 +69,37 @@ export const useSarauNFT = (sarauId: string | null) => {
           abi: abi.abi,
           calls: [
             { reference: "name", methodName: "name", methodParameters: [] },
-            { reference: "symbol", methodName: "symbol", methodParameters: [] },
-            {
-              reference: "maxMint",
-              methodName: "maxMint",
-              methodParameters: [],
-            },
-            {
-              reference: "totalSupply",
-              methodName: "totalSupply",
-              methodParameters: [],
-            },
-            {
-              reference: "startDate",
-              methodName: "startDate",
-              methodParameters: [],
-            },
-            {
-              reference: "endDate",
-              methodName: "endDate",
-              methodParameters: [],
-            },
-            {
-              reference: "homepage",
-              methodName: "homepage",
-              methodParameters: [],
-            },
-            {
-              reference: "tokenURI",
-              methodName: "tokenURI",
-              methodParameters: [],
-            },
+            // { reference: "symbol", methodName: "symbol", methodParameters: [] },
+            // {
+            //   reference: "maxMint",
+            //   methodName: "maxMint",
+            //   methodParameters: [],
+            // },
+            // {
+            //   reference: "totalSupply",
+            //   methodName: "totalSupply",
+            //   methodParameters: [],
+            // },
+            // {
+            //   reference: "startDate",
+            //   methodName: "startDate",
+            //   methodParameters: [],
+            // },
+            // {
+            //   reference: "endDate",
+            //   methodName: "endDate",
+            //   methodParameters: [],
+            // },
+            // {
+            //   reference: "homepage",
+            //   methodName: "homepage",
+            //   methodParameters: [],
+            // },
+            // {
+            //   reference: "tokenURI",
+            //   methodName: "tokenURI",
+            //   methodParameters: [],
+            // },
           ],
         },
       ];
@@ -108,26 +108,27 @@ export const useSarauNFT = (sarauId: string | null) => {
         contractCallContext
       );
       console.log(results);
+      console.log(results.results);
 
-      // const name = await readContract.callStatic.name();
-      // const symbol = await readContract.callStatic.symbol();
-      // const maxMint = await readContract.callStatic.maxMint();
-      // const totalSupply = await readContract.callStatic.totalSupply();
-      // const startDate = await readContract.callStatic.startDate();
-      // const endDate = await readContract.callStatic.endDate();
-      // const homepage = await readContract.callStatic.homepage();
-      // const tokenURI = await readContract.callStatic.tokenURI(1);
+      const name = await readContract.callStatic.name();
+      const symbol = await readContract.callStatic.symbol();
+      const maxMint = await readContract.callStatic.maxMint();
+      const totalSupply = await readContract.callStatic.totalSupply();
+      const startDate = await readContract.callStatic.startDate();
+      const endDate = await readContract.callStatic.endDate();
+      const homepage = await readContract.callStatic.homepage();
+      const tokenURI = await readContract.callStatic.tokenURI(1);
 
-      // setNftData({
-      //   name,
-      //   symbol,
-      //   maxMint,
-      //   totalSupply,
-      //   startDate,
-      //   endDate,
-      //   homepage,
-      //   tokenURI,
-      // });
+      setNftData({
+        name,
+        symbol,
+        maxMint,
+        totalSupply,
+        startDate,
+        endDate,
+        homepage,
+        tokenURI,
+      });
     }
   }, [readContract]);
 
