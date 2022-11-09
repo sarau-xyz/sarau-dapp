@@ -186,9 +186,14 @@ export default function Create() {
                   e.target.files ? setFile(e.target.files[0]) : null
                 }
               />
-              <FormText>
-                Recommended: measures 500x500px, round shape, size less than
-                200KB (Max. 1MB)
+              <FormText >
+                <ul className="mt-3">
+                  <li>
+                    Recommended: measures 500x500px, round shape, size less than
+                    200KB (Max. 1MB).
+                  </li>
+                  <li>This image cannot be changed or deleted after creation.</li>
+                </ul>
               </FormText>
               {file && (
                 <Row className="text-center mt-3">

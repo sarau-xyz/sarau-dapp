@@ -31,11 +31,11 @@ function Header() {
               Create
             </NavLink>
           </NavItem>
-          <NavItem>
+          {/* <NavItem>
             <NavLink tag={Link} to="/mint">
               Mint
             </NavLink>
-          </NavItem>
+          </NavItem> */}
           {sarauMaker.isAdmin && (
             <NavItem onClick={() => sarauMaker.updateCeloPrice()}>
               <NavLink>Update CELO price</NavLink>
