@@ -3,7 +3,6 @@ import { publicProvider } from "wagmi/providers/public";
 import Header from "./components/Header";
 import Create from "./pages/create";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import { Container } from "reactstrap";
 import Mint from "./pages/mint";
 import Home from "./pages/home";
 import { CUSTOM_CHAINS } from "./constants/CUSTOM_CHAINS";
@@ -66,13 +65,11 @@ function App() {
           <SarauMakerProvider>
             <Router>
               <Header />
-              <Container>
                 <Routes>
                   <Route path="/" element={<Home />} />
                   <Route path="/create" element={<Create />} />
                   <Route path="/mint" element={<Mint />} />
                 </Routes>
-              </Container>
             </Router>
           </SarauMakerProvider>
         </RainbowKitProvider>

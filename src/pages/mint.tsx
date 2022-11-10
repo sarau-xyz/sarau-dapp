@@ -3,12 +3,9 @@ import {
   Card,
   CardSubtitle,
   CardTitle,
-  Col,
   Modal,
   ModalHeader,
-  Row,
 } from "reactstrap";
-import { VscDebugBreakpointLog } from "react-icons/vsc";
 import { useLocation } from "react-router-dom";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { useSarauNFT } from "../hooks/useSarauNFT";
@@ -160,7 +157,7 @@ export default function Mint() {
 
           <CardTitle tag="h5">{sarauNFT.nftData?.name}</CardTitle>
           <CardSubtitle className="mb-2 text-muted" tag="h6">
-            {sarauNFT.nftData?.symbol} <VscDebugBreakpointLog />{" "}
+            {sarauNFT.nftData?.symbol} <span className="px-1">·</span>
             <a
               href={sarauNFT.nftData?.homepage}
               target="_blank"
