@@ -6,11 +6,69 @@ import { NodeGlobalsPolyfillPlugin } from "@esbuild-plugins/node-globals-polyfil
 import { NodeModulesPolyfillPlugin } from "@esbuild-plugins/node-modules-polyfill";
 // You don't need to add this to deps, it's included by @esbuild-plugins/node-modules-polyfill
 import rollupNodePolyFill from "rollup-plugin-polyfill-node";
+// import { VitePWA } from "vite-plugin-pwa";
 
 // https://vitejs.dev/config/
 // https://medium.com/@ftaioli/using-node-js-builtin-modules-with-vite-6194737c2cd2
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // VitePWA({
+    //   includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
+    //   manifest: {
+    //     name: "Sarau.xyz",
+    //     short_name: "Sarau",
+    //     theme_color: "#35D07F",
+    //     background_color: "#fff",
+    //     display: "standalone",
+    //     orientation: "portrait",
+    //     scope: "/",
+    //     start_url: "/",
+    //     icons: [
+    //       {
+    //         src: "images/icons/icon-72x72.png",
+    //         sizes: "72x72",
+    //         type: "image/png",
+    //       },
+    //       {
+    //         src: "images/icons/icon-96x96.png",
+    //         sizes: "96x96",
+    //         type: "image/png",
+    //       },
+    //       {
+    //         src: "images/icons/icon-128x128.png",
+    //         sizes: "128x128",
+    //         type: "image/png",
+    //       },
+    //       {
+    //         src: "images/icons/icon-144x144.png",
+    //         sizes: "144x144",
+    //         type: "image/png",
+    //       },
+    //       {
+    //         src: "images/icons/icon-152x152.png",
+    //         sizes: "152x152",
+    //         type: "image/png",
+    //       },
+    //       {
+    //         src: "images/icons/icon-192x192.png",
+    //         sizes: "192x192",
+    //         type: "image/png",
+    //       },
+    //       {
+    //         src: "images/icons/icon-384x384.png",
+    //         sizes: "384x384",
+    //         type: "image/png",
+    //       },
+    //       {
+    //         src: "images/icons/icon-512x512.png",
+    //         sizes: "512x512",
+    //         type: "image/png",
+    //       },
+    //     ],
+    //   },
+    // }),
+  ],
   resolve: {
     alias: {
       // This Rollup aliases are extracted from @esbuild-plugins/node-modules-polyfill,
