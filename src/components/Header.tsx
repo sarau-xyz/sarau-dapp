@@ -42,7 +42,12 @@ function Header() {
             </NavItem>
           )}
         </Nav>
-        <ConnectButton />
+        <ConnectButton
+          showBalance={{
+            smallScreen: false,
+            largeScreen: true,
+          }}
+        />
       </Collapse>
     </Navbar>
   );

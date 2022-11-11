@@ -74,7 +74,7 @@ const Home: React.FC = () => {
               <div className="d-flex flex-column flex-lg-row align-items-md-stretch justify-content-md-center gap-3 mb-4">
                 <div>
                   <Link to="/create">
-                    <Button color="info" size="lg" className="enlarge">
+                    <Button color="primary" size="lg" className="enlarge">
                       Create your Sarau
                     </Button>
                   </Link>
