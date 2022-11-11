@@ -1,3 +1,11 @@
+.enlarge {
+  transition: transform .2s;
+}
+
+.enlarge:hover {
+  transform: scale(1.1);
+}
+
 .spin {
   -webkit-animation: spin 2s infinite linear;
           animation: spin 2s infinite linear;

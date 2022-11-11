@@ -19,7 +19,7 @@ function Header() {
   const toggle = () => setIsOpen(!isOpen);
 
   return (
-    <Navbar expand="md">
+    <Navbar expand="md" color="black" dark>
       <NavbarBrand tag={Link} to="/">
         Sarau.XYZ
       </NavbarBrand>

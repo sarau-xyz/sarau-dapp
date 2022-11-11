@@ -28,7 +28,7 @@ const IconBackGround = styled.div`
 const SarauGradient = styled.span`
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-image: linear-gradient(90deg, #4bc253, #b8eebc);
+  background-image: linear-gradient(90deg, #35d07f, #b8eebc);
 `;
 
 const WhyUseItems = styled.div`
@@ -55,7 +55,7 @@ const Home: React.FC = () => {
           <div className="container-xxl">
             <div className="col-md-8 mx-auto text-center">
               <img
-                src="https://avatars.githubusercontent.com/u/114229151?s=200&v=4"
+                src="/images/sarau_xyz_logo.png"
                 width="200"
                 height="200"
                 alt="Bootstrap"
@@ -74,7 +74,7 @@ const Home: React.FC = () => {
               <div className="d-flex flex-column flex-lg-row align-items-md-stretch justify-content-md-center gap-3 mb-4">
                 <div>
                   <Link to="/create">
-                    <Button color="info" size="lg">
+                    <Button color="info" size="lg" className="enlarge">
                       Create your Sarau
                     </Button>
                   </Link>
@@ -111,7 +111,7 @@ const Home: React.FC = () => {
         >
           <div className="my-auto mx-auto">
             <h1 className="text-center mt-3 mb-3">
-              Why Use <SarauGradient>SarauXYZ</SarauGradient> ?
+              Why Use <SarauGradient>Sarau</SarauGradient> ?
             </h1>
             <Container className="pt-3">
               <Row>
@@ -147,16 +147,17 @@ const Home: React.FC = () => {
 
       <section>
         <Container
-          fluid
           style={{
             // backgroundColor: "#252525",
             minHeight: 400,
           }}
         >
-          <div style={{
-            paddingTop: 100,
-            paddingBottom: 100,
-          }}>
+          <div
+            style={{
+              paddingTop: 100,
+              paddingBottom: 100,
+            }}
+          >
             <h1 className="text-center">See our stats</h1>
             <Row className="text-center">
               <Col>
@@ -172,6 +173,27 @@ const Home: React.FC = () => {
                 <h3 className="text-center">203</h3>
                 <span>NFTs Issued </span>
               </Col>
+            </Row>
+          </div>
+        </Container>
+      </section>
+
+      <section>
+        <Container
+          fluid
+          style={{
+            backgroundColor: "#000000",
+            minHeight: 400,
+          }}
+          className="text-white d-flex"
+        >
+          <div className="my-auto mx-auto">
+            <h1>Build With</h1>
+            <Row>
+              <Col>Valora</Col>
+              <Col>Celo</Col>
+              <Col>Lavanet</Col>
+              <Col>Redstone.Finance</Col>
             </Row>
           </div>
         </Container>
