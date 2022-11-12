@@ -19,6 +19,7 @@ interface INFTData {
   endDate: ethers.BigNumber;
   homepage: string;
   tokenURI: string;
+  owner: string;
 }
 
 export const useSarauNFT = (sarauId: string | null) => {
@@ -61,6 +62,10 @@ export const useSarauNFT = (sarauId: string | null) => {
     const res = await sarauMaker.readContract!.callStatic.getSarau(sarauId);
     setNftAddress(res);
   }, [sarauMaker, sarauId]);
+
+  const editSarauNFTCode = useCallback(async (newCode: string) => {
+    await writeContract!.setCode(newCode);
+  }, [writeContract]);
 
   const getSarauNFTInfos = useCallback(async () => {
     if (readContract) {
@@ -106,6 +111,11 @@ export const useSarauNFT = (sarauId: string | null) => {
               reference: "tokenURI",
               methodName: "tokenURI(uint256)",
               methodParameters: [1],
+            },
+            {
+              reference: "owner",
+              methodName: "owner()",
+              methodParameters: [],
             },
           ],
         },
@@ -192,5 +202,6 @@ export const useSarauNFT = (sarauId: string | null) => {
     getSarauNFTInfos,
     getHasNft,
     alreadyMinted,
+    editSarauNFTCode,
   };
 };

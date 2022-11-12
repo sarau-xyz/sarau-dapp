@@ -3,6 +3,20 @@ import { Chain } from "wagmi";
 export const CUSTOM_CHAINS: {
   [chain: string]: Chain;
 } = {
+  hardhat: {
+    id: 31337,
+    name: "Hardhat (Localhost)",
+    network: "hardhat",
+    nativeCurrency: {
+      decimals: 18,
+      name: "ETH",
+      symbol: "ETH",
+    },
+    rpcUrls: {
+      default: "http://127.0.0.1:8545",
+    },
+    testnet: true,
+  },
   alfajores: {
     id: 44787,
     name: "Celo (Alfajores Testnet)",

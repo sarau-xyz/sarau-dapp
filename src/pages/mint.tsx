@@ -3,6 +3,9 @@ import {
   Card,
   CardSubtitle,
   CardTitle,
+  FormGroup,
+  Input,
+  Label,
   Modal,
   ModalHeader,
 } from "reactstrap";
@@ -32,6 +35,7 @@ import { useChainId } from "../hooks/useChainId";
 import { CUSTOM_CHAINS } from "../constants/CUSTOM_CHAINS";
 import { QRCode } from "react-qrcode-logo";
 import Skeleton from "react-loading-skeleton";
+import { FaPen } from "react-icons/fa";
 
 const parseIpfsUrl = (ipfsUrl: string) =>
   `https://cloudflare-ipfs.com/ipfs/${ipfsUrl.replace("ipfs://", "")}`;
@@ -46,6 +50,12 @@ export default function Mint() {
   const [transactionHash, setTransactionHash] = useState("");
   const [showQrCode, setShowQrCode] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [code, setCode] = useState("");
+
+  const bytes32Code = useMemo(
+    () => ethers.utils.formatBytes32String(code.toUpperCase()),
+    [code]
+  );
 
   const toggleQrCode = () => setShowQrCode((oldState) => !oldState);
 
@@ -71,23 +81,49 @@ export default function Mint() {
   }, [sarauNFT.nftData]);
 
   const handleMint = useCallback(async () => {
-    setLoading(true);
-    if (!account.address && openConnectModal) {
-      openConnectModal();
-    } else {
-      const res = await sarauNFT.writeContract!.mint(
-        ethers.utils.formatBytes32String("")
-      );
+    try {
+      setLoading(true);
+      if (!account.address && openConnectModal) {
+        openConnectModal();
+      } else {
+        const res = await sarauNFT.writeContract!.mint(bytes32Code);
 
-      setTransactionHash(res.hash);
+        setTransactionHash(res.hash);
 
-      cogoToast.success("Success!");
+        cogoToast.success("Success!");
 
-      await sarauNFT.getSarauNFTInfos();
-      await sarauNFT.getHasNft();
+        await sarauNFT.getSarauNFTInfos();
+        await sarauNFT.getHasNft();
+      }
+    } catch (error) {
+      const err = error as any;
+      if (err.reason) {
+        cogoToast.error(`Error: ${err.reason}`);
+      } else {
+        cogoToast.error(
+          "There was an error with your request, please try again later, or open the log for more details."
+        );
+      }
+    } finally {
+      setLoading(false);
     }
-    setLoading(false);
-  }, [sarauNFT, account, openConnectModal]);
+  }, [sarauNFT, account, openConnectModal, bytes32Code]);
+
+  const handleEditCode = useCallback(async () => {
+    try {
+      await sarauNFT.editSarauNFTCode(bytes32Code);
+      cogoToast.success("Code changed!");
+    } catch (error) {
+      const err = error as any;
+      if (err.reason) {
+        cogoToast.error(`Error: ${err.reason}`);
+      } else {
+        cogoToast.error(
+          "There was an error with your request, please try again later, or open the log for more details."
+        );
+      }
+    }
+  }, [bytes32Code, sarauNFT]);
 
   const currentUrl = useMemo(() => window.location.href, [window]);
 
@@ -219,7 +255,26 @@ export default function Mint() {
               view on explorer.
             </a>
           </Alert>
-
+          <FormGroup>
+            <Label>
+              {sarauNFT.nftData.owner === account.address && (
+                <FaPen
+                  style={{ marginRight: 5 }}
+                  onClick={() => handleEditCode()}
+                />
+              )}
+              Mint code:
+            </Label>
+            <Input
+              maxLength={6}
+              value={code}
+              onChange={({ target }) => setCode(target.value.toUpperCase())}
+            />
+            <small>
+              Mint code that the organizer provided, leave blank if none was
+              offered.
+            </small>
+          </FormGroup>
           <CustomButton
             color="primary"
             block
