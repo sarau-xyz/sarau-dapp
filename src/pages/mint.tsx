@@ -257,7 +257,7 @@ export default function Mint() {
           </Alert>
           <FormGroup>
             <Label>
-              {sarauNFT.nftData.owner === account.address && (
+              {sarauNFT.nftData.isAdmin === "1" && (
                 <FaPen
                   style={{ marginRight: 5 }}
                   onClick={() => handleEditCode()}

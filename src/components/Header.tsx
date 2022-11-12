@@ -36,7 +36,7 @@ function Header() {
               Mint
             </NavLink>
           </NavItem> */}
-          {sarauMaker.isAdmin && (
+          {sarauMaker.data.isAdmin === "1" && (
             <NavItem onClick={() => sarauMaker.updateCeloPrice()}>
               <NavLink>Update CELO price</NavLink>
             </NavItem>

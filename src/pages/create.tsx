@@ -60,8 +60,6 @@ export default function Create() {
         abortEarly: false,
       });
 
-      console.log(tParsedData);
-
       sarauModal.doSteps(tParsedData, file!);
     } catch (err) {
       console.error(err);
@@ -87,16 +85,17 @@ export default function Create() {
   };
 
   const displayEtherFee = ethers.utils.formatUnits(
-    sarauMaker.etherFee.toString(),
+    sarauMaker.data.creationEtherFee.toString(),
     18
   );
 
   const displayUsdFee = ethers.utils.formatUnits(
-    sarauMaker.usdFee.toString(),
+    sarauMaker.data.creationUSDFee.toString(),
     18
   );
 
-  const hasBalance = balance.data && balance.data.value.gt(sarauMaker.etherFee);
+  const hasBalance =
+    balance.data && balance.data.value.gt(sarauMaker.data.creationEtherFee);
 
   return (
     <>
@@ -186,13 +185,15 @@ export default function Create() {
                   e.target.files ? setFile(e.target.files[0]) : null
                 }
               />
-              <FormText >
+              <FormText>
                 <ul className="mt-3">
                   <li>
                     Recommended: measures 500x500px, round shape, size less than
                     200KB (Max. 1MB).
                   </li>
-                  <li>This image cannot be changed or deleted after creation.</li>
+                  <li>
+                    This image cannot be changed or deleted after creation.
+                  </li>
                 </ul>
               </FormText>
               {file && (
