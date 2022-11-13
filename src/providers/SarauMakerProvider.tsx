@@ -1,11 +1,33 @@
+import {
+  ContractCallContext,
+  ContractCallResults,
+  Multicall,
+} from "ethereum-multicall";
 import { ethers } from "ethers";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { WrapperBuilder } from "redstone-evm-connector";
-import { useSigner, useAccount, useProvider } from "wagmi";
+import { useSigner, useAccount, useProvider, chain } from "wagmi";
+import { MULTICALL_ADDRESSES } from "../constants/MULTICALL_ADDRESSES";
 import { SARAU_MAKER_ADDRESSES } from "../constants/SARAU_MAKER_ADDRESSES";
 import { useChainId } from "../hooks/useChainId";
 import { SarauMakerContext } from "../hooks/useSarauMaker";
 import abi from "../static/abis/SarauMaker.json";
+import { parseMultiCall } from "../utils/parseMulticall";
+
+export interface ISarauMakerData {
+  creationUSDFee: ethers.BigNumber;
+  creationEtherFee: ethers.BigNumber;
+  isAdmin: string;
+}
+
+const wrapContract = (
+  addressOrName: string,
+  contractInterface: ethers.ContractInterface,
+  signerOrProvider?: ethers.Signer | ethers.providers.Provider | undefined
+) =>
+  WrapperBuilder.wrapLite(
+    new ethers.Contract(addressOrName, contractInterface, signerOrProvider)
+  ).usingPriceFeed("redstone", { asset: "CELO" });
 
 export const SarauMakerProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
@@ -14,58 +36,90 @@ export const SarauMakerProvider: React.FC<{ children: React.ReactNode }> = ({
   const account = useAccount();
   const provider = useProvider();
   const { chainId } = useChainId();
-  const [etherFee, setEtherFee] = useState(ethers.BigNumber.from("0"));
-  const [usdFee, setUsdFee] = useState(ethers.BigNumber.from("0"));
-  const [isAdmin, setIsAdmin] = useState(false);
+  const [data, setData] = useState<ISarauMakerData>({
+    creationEtherFee: ethers.BigNumber.from("0"),
+    creationUSDFee: ethers.BigNumber.from("0"),
+    isAdmin: "0",
+  } as ISarauMakerData);
+
+  const sarauMakerAddress = useMemo(
+    () => SARAU_MAKER_ADDRESSES[chainId],
+    [chainId]
+  );
+
+  const multicall = useMemo(
+    () =>
+      new Multicall({
+        ethersProvider: provider,
+        tryAggregate: false,
+        multicallCustomContractAddress: MULTICALL_ADDRESSES[chainId] ?? "", // multicall CELO and alfajores addr
+      }),
+    [provider, chainId]
+  );
 
   const writeContract = useMemo(() => {
-    if (chainId && SARAU_MAKER_ADDRESSES[chainId] && signer) {
-      // console.log("connector", chainId, SARAU_MAKER_ADDRESSES[chainId]);
-      return WrapperBuilder.wrapLite(
-        new ethers.Contract(SARAU_MAKER_ADDRESSES[chainId], abi.abi, signer)
-      ).usingPriceFeed("redstone", { asset: "CELO" });
+    if (chainId && sarauMakerAddress && signer) {
+      return wrapContract(sarauMakerAddress, abi.abi, signer);
     }
     return null;
   }, [chainId, signer]);
 
   const readContract = useMemo(() => {
-    if (chainId && SARAU_MAKER_ADDRESSES[chainId]) {
-      // console.log("connector", chainId, SARAU_MAKER_ADDRESSES[chainId]);
-      return WrapperBuilder.wrapLite(
-        new ethers.Contract(SARAU_MAKER_ADDRESSES[chainId], abi.abi, provider)
-      ).usingPriceFeed("redstone", { asset: "CELO" });
+    if (chainId && sarauMakerAddress) {
+      return wrapContract(sarauMakerAddress, abi.abi, provider);
     }
     return null;
   }, [chainId, provider]);
 
-  const getSarauCreationEtherFee = useCallback(async () => {
-    const fee =
-      (await readContract?.callStatic.creationEtherFee()) as ethers.BigNumber;
-    const usdFee =
-      (await readContract?.callStatic.creationUSDFee()) as ethers.BigNumber;
+  const getDetails = useCallback(async () => {
+    if (readContract && multicall) {
+      const contractCallContext: ContractCallContext[] = [
+        {
+          reference: "maker",
+          contractAddress: SARAU_MAKER_ADDRESSES[chainId],
+          abi: abi.abi,
+          calls: [
+            {
+              reference: "creationEtherFee",
+              methodName: "creationEtherFee()",
+              methodParameters: [],
+            },
+            {
+              reference: "creationUSDFee",
+              methodName: "creationUSDFee()",
+              methodParameters: [],
+            },
+            {
+              reference: "isAdmin",
+              methodName: "hasRole(bytes32, address)",
+              methodParameters: [
+                ethers.utils.formatBytes32String(""),
+                account.address,
+              ],
+            },
+          ],
+        },
+      ];
 
-    setEtherFee(fee);
-    setUsdFee(usdFee);
-  }, [readContract]);
-
-  useEffect(() => {
-    getSarauCreationEtherFee();
-  }, [getSarauCreationEtherFee]);
-
-  const getIsAdmin = useCallback(async () => {
-    if (account.address && readContract) {
-      const isAdmin = await readContract.callStatic.hasRole(
-        ethers.utils.formatBytes32String(""),
-        account.address
+      const results: ContractCallResults = await multicall.call(
+        contractCallContext
       );
 
-      setIsAdmin(isAdmin);
+      const data = parseMultiCall<ISarauMakerData>(
+        results.results.maker.callsReturnContext
+      );
+
+      if (data.isAdmin.includes("1")) {
+        data.isAdmin = "1";
+      }
+
+      setData(data);
     }
-  }, [account.address, readContract]);
+  }, [readContract, multicall, account]);
 
   useEffect(() => {
-    getIsAdmin();
-  }, [getIsAdmin]);
+    getDetails();
+  }, [chainId, account.address]);
 
   const updateCeloPrice = useCallback(async () => {
     if (writeContract) {
@@ -78,9 +132,7 @@ export const SarauMakerProvider: React.FC<{ children: React.ReactNode }> = ({
       value={{
         readContract,
         writeContract,
-        etherFee,
-        usdFee,
-        isAdmin,
+        data,
         updateCeloPrice,
       }}
     >

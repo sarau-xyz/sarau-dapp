@@ -36,6 +36,7 @@ import { CUSTOM_CHAINS } from "../constants/CUSTOM_CHAINS";
 import { QRCode } from "react-qrcode-logo";
 import Skeleton from "react-loading-skeleton";
 import { FaPen } from "react-icons/fa";
+import { useSarauMaker } from "../hooks/useSarauMaker";
 
 const parseIpfsUrl = (ipfsUrl: string) =>
   `https://cloudflare-ipfs.com/ipfs/${ipfsUrl.replace("ipfs://", "")}`;
@@ -63,6 +64,7 @@ export default function Mint() {
 
   const sarauId = useMemo(() => query.get("id"), [query]);
 
+  const sarauMaker = useSarauMaker();
   const sarauNFT = useSarauNFT(sarauId);
 
   const getNFTImage = useCallback(async () => {
@@ -86,7 +88,7 @@ export default function Mint() {
       if (!account.address && openConnectModal) {
         openConnectModal();
       } else {
-        const res = await sarauNFT.writeContract!.mint(bytes32Code);
+        const res = await sarauMaker.writeContract!.mint(sarauId, bytes32Code);
 
         setTransactionHash(res.hash);
 
@@ -104,6 +106,7 @@ export default function Mint() {
           "There was an error with your request, please try again later, or open the log for more details."
         );
       }
+      console.error(error);
     } finally {
       setLoading(false);
     }
@@ -257,7 +260,7 @@ export default function Mint() {
           </Alert>
           <FormGroup>
             <Label>
-              {sarauNFT.nftData.owner === account.address && (
+              {sarauNFT.nftData.isAdmin === "1" && (
                 <FaPen
                   style={{ marginRight: 5 }}
                   onClick={() => handleEditCode()}

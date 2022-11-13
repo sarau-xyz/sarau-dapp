@@ -42,7 +42,6 @@ const RequestCelo: React.FC = () => {
       if (networkSupport) {
         try {
           const form = new FormData();
-          console.log(captcha, "captchaResponse");
           form.append("token", captcha);
           form.append("address", account.address ?? "");
 
