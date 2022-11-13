@@ -106,7 +106,7 @@ export const SarauMakerProvider: React.FC<{ children: React.ReactNode }> = ({
               methodName: "hasRole(bytes32, address)",
               methodParameters: [
                 ethers.utils.formatBytes32String(""),
-                account.address,
+                account.address ?? ethers.constants.AddressZero,
               ],
             },
           ],
