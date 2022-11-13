@@ -57,4 +57,4 @@ export const CUSTOM_CHAINS: {
   },
 };
 
-export const DEFAULT_CHAIN_ID = CUSTOM_CHAINS.alfajores.id;
+export const DEFAULT_CHAIN_ID = CUSTOM_CHAINS.celo.id;
