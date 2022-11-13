@@ -17,6 +17,8 @@ import { parseMultiCall } from "../utils/parseMulticall";
 export interface ISarauMakerData {
   creationUSDFee: ethers.BigNumber;
   creationEtherFee: ethers.BigNumber;
+  getNumberOfMints: ethers.BigNumber;
+  getNumberOfSaraus: ethers.BigNumber;
   isAdmin: string;
 }
 
@@ -87,6 +89,16 @@ export const SarauMakerProvider: React.FC<{ children: React.ReactNode }> = ({
             {
               reference: "creationUSDFee",
               methodName: "creationUSDFee()",
+              methodParameters: [],
+            },
+            {
+              reference: "getNumberOfMints",
+              methodName: "getNumberOfMints()",
+              methodParameters: [],
+            },
+            {
+              reference: "getNumberOfSaraus",
+              methodName: "getNumberOfSaraus()",
               methodParameters: [],
             },
             {

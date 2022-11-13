@@ -8,6 +8,7 @@ import { RiLeafLine } from "react-icons/ri";
 import { FaMoneyBillWaveAlt } from "react-icons/fa";
 import { BsCodeSlash } from "react-icons/bs";
 import styled from "styled-components";
+import { useSarauMaker } from "../hooks/useSarauMaker";
 
 const TEXTS = ["Souvenirs", "Mementos", "Memories", "Collectibles", "Art"];
 
@@ -38,6 +39,7 @@ const WhyUseItems = styled.div`
 `;
 
 const Home: React.FC = () => {
+  const sarauMaker = useSarauMaker();
   const [index, setIndex] = React.useState(0);
 
   React.useEffect(() => {
@@ -163,14 +165,19 @@ const Home: React.FC = () => {
               <Col>
                 <h3>
                   <AnimatedNumber
-                    value={203}
+                    value={sarauMaker?.data?.getNumberOfSaraus ?? 0}
                     formatValue={(v: number) => v.toFixed(0)}
                   />
                 </h3>
                 <span>Saraus created</span>
               </Col>
               <Col>
-                <h3 className="text-center">203</h3>
+                <h3>
+                  <AnimatedNumber
+                    value={sarauMaker?.data?.getNumberOfMints ?? 0}
+                    formatValue={(v: number) => v.toFixed(0)}
+                  />
+                </h3>
                 <span>NFTs Issued </span>
               </Col>
             </Row>
