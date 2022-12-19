@@ -29,8 +29,8 @@ export const CUSTOM_CHAINS: {
       symbol: "CELO",
     },
     rpcUrls: {
-      default: "https://celo-hackathon.lavanet.xyz/celo/http",
-      public: "https://forno.celo.org/",
+      // default: "https://celo-hackathon.lavanet.xyz/celo/http",
+      default: "https://forno.celo.org/",
     },
     blockExplorers: {
       default: { name: "CeloScan", url: "https://celoscan.io/" },
@@ -47,8 +47,8 @@ export const CUSTOM_CHAINS: {
       symbol: "CELO",
     },
     rpcUrls: {
-      default: "https://celo-hackathon.lavanet.xyz/celo-alfajores/http",
-      public: "https://alfajores-forno.celo-testnet.org/",
+      // default: "https://celo-hackathon.lavanet.xyz/celo-alfajores/http",
+      default: "https://alfajores-forno.celo-testnet.org/",
     },
     blockExplorers: {
       default: { name: "CeloScan", url: "https://alfajores.celoscan.io/" },
